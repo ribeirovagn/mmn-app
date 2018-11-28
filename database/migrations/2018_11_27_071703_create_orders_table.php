@@ -20,6 +20,7 @@ class CreateOrdersTable extends Migration
             $table->decimal('value_fiat', 10, 2);
             $table->decimal('value_crypto', 28, 18);
             $table->tinyInteger('status')->default(1);
+            $table->datetime('payday')->nullable();
             $table->timestamps();
         });
     }

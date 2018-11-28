@@ -15,6 +15,11 @@ class CreateOrderStatusesTable extends Migration
     {
         Schema::create('order_statuses', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('order_id')->unsigned();
+            $table->foreign('order_id')->references('id')->on('orders');
+            $table->tinyInteger('status');
+            $table->integer('user_id')->nullable();
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }

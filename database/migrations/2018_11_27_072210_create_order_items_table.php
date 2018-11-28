@@ -18,7 +18,9 @@ class CreateOrderItemsTable extends Migration
             $table->foreign('order_id')->references('id')->on('orders');
             $table->integer('product_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products');
-            $table->decimal('value_un', 12, 8);
+            $table->integer('quantity');
+            $table->decimal('value_unity', 12, 2);
+            $table->decimal('value', 12, 2);
         });
     }
 
