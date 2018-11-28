@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use App\User;
 use App\Genealogy;
 use App\GenealogyStatus;
-
+use App\GenealogyResume;
 use App\Http\Enum\UserStatusEnum;
 
 class GenealogyController extends Controller {
@@ -19,7 +18,7 @@ class GenealogyController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        return User::with('genealogies')->with('genealogy_statuses')->get();
+        return User::with(['genealogies', 'genealogy_statuses'])->get();
     }
 
     /**
@@ -50,6 +49,10 @@ class GenealogyController extends Controller {
                 'status' => $genealogy->status,
                 'user_id' => $genealogy->user_id,
             ]);
+
+            GenealogyResume::create([
+                'user_id' => $userCreate->id
+            ]);
             
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -65,14 +68,14 @@ class GenealogyController extends Controller {
     public function show($id) {
         return User::with('genealogies')->with('genealogy_statuses')->find($id);
     }
-    
+
     /**
      * Display the specified resource. 
      *  
      * @param type $id
      * @return type
      */
-    public function indicator($id){
+    public function indicator($id) {
         return Genealogy::where('indicator', '=', $id)->with('user')->get();
     }
 

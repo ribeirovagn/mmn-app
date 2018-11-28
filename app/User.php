@@ -32,7 +32,7 @@ class User extends Authenticatable {
 
     /**
      * 
-     * @return type
+     * @return App\Genealogy
      */
     public function genealogies() {
         return $this->hasOne('App\Genealogy');
@@ -40,10 +40,22 @@ class User extends Authenticatable {
 
     /**
      * 
-     * @return type
+     * @return App\GenealogyStatus
      */
     public function genealogy_statuses() {
         return $this->hasOne('App\GenealogyStatus');
+    }
+    
+    /**
+     * 
+     * @return App\UserResume
+     */
+    public function resume(){
+        return $this->hasOne('App\UserResume');
+    }
+    
+    public function genealogyResume(){
+        return $this->hasOne('App\GenealogyResume');
     }
 
 }

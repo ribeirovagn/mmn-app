@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Database\Seeder;
+
 use App\User;
 use App\Genealogy;
 use App\GenealogyStatus;
+use App\UserResume;
+
 use App\Http\Enum\UserStatusEnum;
 
 class UserSeed extends Seeder {
@@ -20,6 +23,10 @@ class UserSeed extends Seeder {
                     'email' => 'demo@demo.com',
                     'password' => bcrypt('zaq12wsx')
         ]);
+        
+        UserResume::create([
+            'user_id' => $userCreate->id
+        ]);
 
         $genealogy = Genealogy::create([
                     'user_id' => $userCreate->id,
@@ -30,6 +37,10 @@ class UserSeed extends Seeder {
         GenealogyStatus::create([
             'status' => $genealogy->status,
             'user_id' => $genealogy->user_id,
+        ]);
+        
+        GenealogyResume::create([
+            'user_id' => $userCreate->id
         ]);
     }
 

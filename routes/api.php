@@ -23,7 +23,15 @@ Route::group([
         ], function() {
     Route::get('/', 'GenealogyController@index')->name('genealogies');
     Route::get('/show/{id}', 'GenealogyController@show')->name('genealogy.show');
+    Route::get('/show/{id}', 'GenealogyController@show')->name('genealogy.show');
     Route::get('/indicator/{id}', 'GenealogyController@indicator')->name('genealogy.indicator');
+
+    Route::group([
+        'prefix' => 'resume'
+            ], function() {
+        Route::get('/{id}', 'GenealogyResumeController@show')->name('genealogies.resume.show');
+        Route::get('/', 'GenealogyResumeController@index')->name('genealogies.resume');
+    });
 });
 
 Route::group([

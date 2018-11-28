@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\UserResume;
 use Illuminate\Support\Facades\DB;
 use App\Http\Enum\UserStatusEnum;
 
@@ -15,7 +16,7 @@ class UserController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        //
+        return User::find(Auth::user()->id);
     }
 
     /**
@@ -49,6 +50,10 @@ class UserController extends Controller {
                         'name' => $request->name,
                         'email' => $request->email,
                         'password' => bcrypt($request->password)
+            ]);
+            
+            UserResume::create([
+                'user_id' => $userCreate->id
             ]);
 
             $GenealogyController = new GenealogyController();
