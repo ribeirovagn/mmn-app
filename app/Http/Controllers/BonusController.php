@@ -14,7 +14,7 @@ class BonusController extends Controller
      */
     public function index()
     {
-        //
+        return Bonus::all();
     }
 
     /**
@@ -44,9 +44,9 @@ class BonusController extends Controller
      * @param  \App\Bonus  $bonus
      * @return \Illuminate\Http\Response
      */
-    public function show(Bonus $bonus)
+    public function show($id)
     {
-        //
+        return Bouns::find($id);
     }
 
     /**

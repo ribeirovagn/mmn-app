@@ -6,6 +6,7 @@ use App\User;
 use App\Genealogy;
 use App\GenealogyStatus;
 use App\UserResume;
+use App\GenealogyResume;
 
 use App\Http\Enum\UserStatusEnum;
 

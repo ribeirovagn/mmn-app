@@ -51,3 +51,11 @@ Route::group([
     Route::get('/{id}', 'OrderController@show')->name('order.show');
     Route::get('/', 'OrderController@index')->name('orders');
 });
+
+Route::group([
+    'prefix' => 'bonus',
+    'middleware' => 'auth:api'
+        ], function() {
+    Route::get('/', 'BonusController@index');
+    Route::get('/{id}', 'BonusController@show');
+});

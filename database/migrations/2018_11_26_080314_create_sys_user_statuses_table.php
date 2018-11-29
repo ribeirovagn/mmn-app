@@ -15,7 +15,7 @@ class CreateSysUserStatusesTable extends Migration
     {
         Schema::create('sys_user_statuses', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->char('name', 40);
         });
     }
 
