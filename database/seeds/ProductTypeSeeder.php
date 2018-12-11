@@ -16,7 +16,7 @@ class ProductTypeSeeder extends Seeder
     public function run()
     {
         $ativacao = ProductType::create([
-            'name' => 'Ativação',
+            'name' => 'Activation',
             'is_active' => true
         ]);
         
@@ -28,7 +28,7 @@ class ProductTypeSeeder extends Seeder
         ]);
         
         $digihash = ProductType::create([
-            'name' => 'Digihash',
+            'name' => 'Multilevel',
             'is_active' => true
         ]);
         

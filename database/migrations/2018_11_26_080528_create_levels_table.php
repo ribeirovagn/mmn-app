@@ -15,15 +15,14 @@ class CreateLevelsTable extends Migration
     {
         Schema::create('levels', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('type');
             $table->integer('start')->default(1);
             $table->integer('end')->default(1);
             $table->integer('bonus_id')->unsigned();
             $table->foreign('bonus_id')->references('id')->on('bonuses');
             $table->integer('product_id')->unsigned();
-//            $table->foreign('product_id')->references('id')->on('products');
-            $table->integer('dots')->default(0);
-            $table->decimal('amount')->default(0);
+            $table->integer('dots_binary')->default(0);
+            $table->integer('dots_unilevel')->default(0);
+            $table->decimal('amount', 10, 2)->default(0);
             $table->timestamps();
         });
     }

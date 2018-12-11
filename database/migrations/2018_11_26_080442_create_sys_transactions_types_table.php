@@ -15,6 +15,7 @@ class CreateSysTransactionsTypesTable extends Migration
     {
         Schema::create('sys_transactions_types', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
             $table->timestamps();
         });
     }

@@ -17,9 +17,11 @@ class CreateOrdersTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('salesman')->unsigned();
             $table->decimal('value_fiat', 10, 2);
             $table->decimal('value_crypto', 28, 18);
             $table->tinyInteger('status')->default(1);
+            $table->string('txid')->nullable();
             $table->datetime('payday')->nullable();
             $table->timestamps();
         });

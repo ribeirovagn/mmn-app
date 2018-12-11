@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['user_id', 'value_fiat', 'value_crypto', 'status', 'payday'];
+    protected $fillable = ['user_id', 'value_fiat', 'value_crypto', 'status', 'payday', 'txid', 'salesman'];
     
-    public function status(){
+    public function statuses(){
         return $this->hasMany('App\OrderStatus');
     }
     

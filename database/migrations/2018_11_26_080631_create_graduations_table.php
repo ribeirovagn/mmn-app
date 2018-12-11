@@ -15,6 +15,12 @@ class CreateGraduationsTable extends Migration
     {
         Schema::create('graduations', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
+            $table->string('figure')->nullable();
+            $table->tinyInteger('ordinal');
+            $table->decimal('limit', 10, 2);
+            $table->integer('dots_start');
+            $table->integer('dots_end');
             $table->timestamps();
         });
     }

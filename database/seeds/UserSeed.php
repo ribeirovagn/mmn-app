@@ -36,8 +36,8 @@ class UserSeed extends Seeder {
         ]);
 
         GenealogyStatus::create([
+            'user_id' => $userCreate->id,
             'status' => $genealogy->status,
-            'user_id' => $genealogy->user_id,
         ]);
         
         GenealogyResume::create([

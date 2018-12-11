@@ -3,9 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
-class Genealogy extends Model
-{
+class Genealogy extends Model {
+
     /**
      * The attributes that are mass assignable.
      *
@@ -14,12 +15,87 @@ class Genealogy extends Model
     protected $fillable = [
         'user_id', 'side', 'indicator', 'father', 'child_0', 'child_1', 'binary', 'preferencial_side', 'date_positioning', 'status'
     ];
-    
-    public function user(){
+    protected $primaryKey = 'user_id';
+
+    public function user() {
         return $this->belongsTo('App\User');
     }
-    
-    public function genealogies_status(){
+
+    /**
+     * 
+     * @return type
+     */
+    public function genealogies_status() {
         return $this->hasMany('App\GenealogyStatus');
     }
+
+    /**
+     * 
+     * @return type
+     */
+    public function leaf0() {
+        return $this->hasOne('App\Genealogy', 'user_id', 'child_0');
+    }
+
+    /**
+     * 
+     * @return mixed
+     */
+    public function leaf1() {
+        return $this->hasOne('App\Genealogy', 'user_id', 'child_1');
+    }
+
+    /**
+     * 
+     * @param type $side
+     * @param type $indicator
+     * @return type
+     */
+    public static function lastNode($side, $indicator) {
+
+        $query = "SELECT 
+                    child, parent, lvl AS level, status
+                FROM
+                    (SELECT 
+                        @r AS parent, status, 
+                            (SELECT 
+                                    @r:=child_{$side}
+                                FROM
+                                    genealogies
+                                WHERE
+                                    user_id = parent
+                                LIMIT 1) AS child,
+                            @l:=@l + 1 AS lvl
+                    FROM
+                        (SELECT @r:= {$indicator}, @l:=0, @cl:=0) vars, genealogies
+                    HAVING parent IS NOT NULL) AS h
+                WHERE
+                    child IS NOT NULL";
+
+//        return $query;
+        return DB::select(DB::raw($query));
+    }
+
+    public static function indicatorsAsc($node) {
+        $query = "SELECT 
+                    child, parent, lvl AS level, status
+                FROM
+                    (SELECT 
+                        @r AS parent, status, 
+                            (SELECT 
+                                    @r:=indicator
+                                FROM
+                                    genealogies
+                                WHERE
+                                    user_id = parent
+                                LIMIT 1) AS child,
+                            @l:=@l + 1 AS lvl
+                    FROM
+                        (SELECT @r:= {$node}, @l:=0, @cl:=0) vars, genealogies
+                    HAVING parent IS NOT NULL) AS h
+                WHERE
+                    child IS NOT NULL";
+        return DB::select(DB::raw($query));
+    }
+
 }

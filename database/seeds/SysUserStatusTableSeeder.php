@@ -14,15 +14,15 @@ class SysUserStatusTableSeeder extends Seeder
     {
         
         SysUserStatus::create([
-            'name' => 'Pendente'
+            'name' => 'Pending'
         ]);
         
         SysUserStatus::create([
-            'name' => 'Ativo'
+            'name' => 'Active'
         ]);
         
         SysUserStatus::create([
-            'name' => 'Cancelado'
+            'name' => 'Canceled'
         ]);
         
     }

@@ -25,7 +25,7 @@ Route::group([
     Route::get('/show/{id}', 'GenealogyController@show')->name('genealogy.show');
     Route::get('/show/{id}', 'GenealogyController@show')->name('genealogy.show');
     Route::get('/indicator/{id}', 'GenealogyController@indicator')->name('genealogy.indicator');
-
+   
     Route::group([
         'prefix' => 'resume'
             ], function() {
@@ -47,9 +47,17 @@ Route::group([
     'prefix' => 'order',
     'middleware' => 'auth:api'
         ], function() {
-    Route::post('/store', 'OrderController@store')->name('order.store');
-    Route::get('/{id}', 'OrderController@show')->name('order.show');
+    Route::post('/', 'OrderController@store')->name('order.store');
     Route::get('/', 'OrderController@index')->name('orders');
+    Route::get('/{id}', 'OrderController@show')->name('order.show');
+    Route::put('pay/{id}', 'OrderController@pay')->name('order.show');
+});
+
+Route::group([
+    'prefix' => 'level',
+    'middleware' => 'auth:api'
+], function(){
+    Route::get('/', 'LevelController@index');
 });
 
 Route::group([

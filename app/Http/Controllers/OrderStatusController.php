@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use App\OrderStatus;
 use Illuminate\Http\Request;
 
-class OrderStatusController extends Controller
-{
+class OrderStatusController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         //
     }
 
@@ -22,8 +21,7 @@ class OrderStatusController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -33,9 +31,12 @@ class OrderStatusController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public static function store($order) {
+        return OrderStatus::create([
+            'order_id' => $order->id,
+            'user_id' => $order->user_id,
+            'status' => $order->status
+        ]);
     }
 
     /**
@@ -44,8 +45,7 @@ class OrderStatusController extends Controller
      * @param  \App\OrderStatus  $orderStatus
      * @return \Illuminate\Http\Response
      */
-    public function show(OrderStatus $orderStatus)
-    {
+    public function show(OrderStatus $orderStatus) {
         //
     }
 
@@ -55,8 +55,7 @@ class OrderStatusController extends Controller
      * @param  \App\OrderStatus  $orderStatus
      * @return \Illuminate\Http\Response
      */
-    public function edit(OrderStatus $orderStatus)
-    {
+    public function edit(OrderStatus $orderStatus) {
         //
     }
 
@@ -67,8 +66,7 @@ class OrderStatusController extends Controller
      * @param  \App\OrderStatus  $orderStatus
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, OrderStatus $orderStatus)
-    {
+    public function update(Request $request, OrderStatus $orderStatus) {
         //
     }
 
@@ -78,8 +76,8 @@ class OrderStatusController extends Controller
      * @param  \App\OrderStatus  $orderStatus
      * @return \Illuminate\Http\Response
      */
-    public function destroy(OrderStatus $orderStatus)
-    {
+    public function destroy(OrderStatus $orderStatus) {
         //
     }
+
 }

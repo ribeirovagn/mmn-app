@@ -6,10 +6,12 @@ use App\Order;
 use App\OrderStatus;
 use App\OrderItem;
 use App\Product;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Enum\OrderStatusEnum;
+use App\Http\Enum\UserStatusEnum;
+use Carbon\Carbon;
 
 class OrderController extends Controller {
 
@@ -19,7 +21,7 @@ class OrderController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        return Order::with('status')->with('items')->where('user_id', '=', Auth::user()->id)->get();
+        return Order::with('statuses')->with('items')->where('user_id', '=', Auth::user()->id)->get();
     }
 
     /**
@@ -40,22 +42,21 @@ class OrderController extends Controller {
     public function store(Request $request) {
         DB::beginTransaction();
         try {
-            
+
             $value_fiat = 0;
-            
+
+            $genealogyController = new GenealogyController();
+            $genealogy = $genealogyController->show(Auth::user()->id);
+
             $order = Order::create([
                         'user_id' => Auth::user()->id,
                         'value_fiat' => $value_fiat,
                         'value_crypto' => 0,
-                        'status' => 1
+                        'status' => 1,
+                        'salesman' => $genealogy->genealogies->indicator
             ]);
 
-
-            OrderStatus::create([
-                'order_id' => $order->id,
-                'user_id' => $order->user_id,
-                'status' => $order->status
-            ]);
+            OrderStatusController::store($order);
 
             foreach ($request->products as $products) {
 
@@ -70,15 +71,13 @@ class OrderController extends Controller {
                         'value_unity' => $product->value,
                         'value' => ($product->value * $products['quantity'])
                     ]);
-                    
+
                     $value_fiat += ($product->value * $products['quantity']);
-                    
-                    
                 } else {
                     throw new \Exception('Produto Inativo: ' . $products->name . ' - ' . $product->description);
                 }
             }
-            
+
             $order->update([
                 'value_fiat' => $value_fiat
             ]);
@@ -91,7 +90,7 @@ class OrderController extends Controller {
         } catch (\Exception $ex) {
             DB::rollBack();
             return response([
-                'error' => $ex->getPrevious()
+                'error' => $ex->getMessage()
                     ], 422);
         }
     }
@@ -103,7 +102,7 @@ class OrderController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        return Order::with('status')->with('items')->find($id);
+        return Order::with('statuses')->with('items')->find($id);
     }
 
     /**
@@ -135,6 +134,140 @@ class OrderController extends Controller {
      */
     public function destroy(Order $order) {
         //
+    }
+
+    /**
+     * Pagamento de pedidos
+     * 
+     * @param int $id
+     */
+    public function pay($id) {
+        DB::beginTransaction();
+        try {
+            $order = $this->show($id);
+
+            if ($order->status === OrderStatusEnum::PAID) {
+                throw new \Exception("Pedido já foi pago!");
+            }
+
+            $levelcontroller = new LevelController();
+            $productController = new ProductController();
+
+            foreach ($order->items as $item) {
+
+                $product = $productController->show($item->product_id);
+
+                if ($product->productType->is_active === 1) {
+                    switch ($product->productType->name) {
+                        case "Activation":
+                            $this->payActivation($order);
+                            break;
+
+                        case "Multilevel":
+                            return $this->payMultilevel($order, $item);
+                            break;
+
+                        case "Voucher":
+                            $this->payVoucher($order);
+                            break;
+                    }
+                }
+            }
+
+            $updated = $this->updateStatus($order, OrderStatusEnum::PAID);
+
+            DB::commit();
+            return response($updated, 200);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response([
+                'error' => $ex->getMessage()
+                    ], 422);
+        }
+    }
+
+    /**
+     * 
+     * @param type $order
+     * @param type $status
+     * @return type
+     * @throws \Exception
+     */
+    protected function updateStatus($order, $status) {
+        try {
+
+            $order->update([
+                'status' => $status,
+                'payday' => ($status === OrderStatusEnum::PAID) ? Carbon::now() : null
+            ]);
+
+            OrderStatusController::store($order);
+
+            return $this->show($order->id);
+        } catch (\Exception $ex) {
+            throw new \Exception($ex->getMessage());
+        }
+    }
+
+    /**
+     * 
+     * @param App\Order $order
+     * @throws \Exception
+     */
+    protected function payActivation($order) {
+        try {
+            $GenealogyController = new GenealogyController();
+            $SysBusinessController = SysBusinessController::show();
+
+            $Genealogy = $GenealogyController->updateStatus($order->user_id, UserStatusEnum::ACTIVE);
+
+            if ($SysBusinessController->binary === 1) {
+                $GenealogyController->binaryPositioning($order->user_id);
+            }
+        } catch (\Exception $ex) {
+            throw new \Exception('Activation ' . $ex->getMessage());
+        }
+    }
+
+    /**
+     * 
+     * @param App\Order $order
+     * @param type $item
+     * @return type
+     * @throws \Exception
+     */
+    protected function payMultilevel($order, $item) {
+        try {
+            $levelController = new LevelController();
+            $levels = $levelController->show($item->product_id);
+
+            $indicators = GenealogyController::indicatorsAsc($order->salesman);
+            if (count($indicators) > 0) {
+                foreach ($indicators as $indicator) {
+            
+
+                    $level = LevelController::betweenNormalize($levels, (int) $indicator->level);
+                    if ($level) {
+                        return LevelController::store($level, $indicator, $item);
+                    }
+                }
+            }
+        } catch (\Exception $exc) {
+            throw new \Exception('Multilevel ' . $exc->getMessage());
+        }
+    }
+
+    /**
+     * 
+     * @param App\Order $order
+     * @throws \Exception
+     */
+    protected function payVoucher($order) {
+        try {
+            
+        } catch (Exception $exc) {
+            throw new \Exception('Voucher ' . $exc->getMessage());
+        }
     }
 
 }
