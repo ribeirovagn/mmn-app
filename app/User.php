@@ -40,22 +40,19 @@ class User extends Authenticatable {
 
     /**
      * 
+     * @return App\GenealogyResume
+     */
+    public function genealogy_resume() {
+        return $this->hasOne('App\GenealogyResume');
+    }
+
+    /**
+     * 
      * @return App\GenealogyStatus
      */
     public function genealogy_statuses() {
-        return $this->hasOne('App\GenealogyStatus');
+        return $this->hasMany('App\GenealogyStatus');
     }
     
-    /**
-     * 
-     * @return App\UserResume
-     */
-    public function resume(){
-        return $this->hasOne('App\UserResume');
-    }
-    
-    public function genealogyResume(){
-        return $this->hasOne('App\GenealogyResume');
-    }
 
 }

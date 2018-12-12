@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transactions extends Model
 {
-    protected $fillable = ['references_id', 'value', 'status', 'type'];
+    protected $fillable = ['user_id', 'references_id', 'value', 'status', 'type'];
+    
+    public function statuses(){
+        return $this->hasMany('App\TransactionStatus');
+    }
 }

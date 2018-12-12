@@ -18,6 +18,8 @@ class GenealogyResume extends Model
     
     public $timestamps = false;
     
+    protected $primaryKey = 'user_id';
+    
     
     public function user(){
         return $this->belongsTo('App\User', 'user_id');

@@ -21,10 +21,10 @@ Route::group([
     'prefix' => 'genealogy',
     'middleware' => 'auth:api'
         ], function() {
-    Route::get('/', 'GenealogyController@index')->name('genealogies');
-    Route::get('/show/{id}', 'GenealogyController@show')->name('genealogy.show');
     Route::get('/show/{id}', 'GenealogyController@show')->name('genealogy.show');
     Route::get('/indicator/{id}', 'GenealogyController@indicator')->name('genealogy.indicator');
+    Route::get('/change-side/{id}', 'GenealogyController@changeSide')->name('genealogy.change-side');
+    Route::get('/', 'GenealogyController@index')->name('genealogies');
    
     Route::group([
         'prefix' => 'resume'

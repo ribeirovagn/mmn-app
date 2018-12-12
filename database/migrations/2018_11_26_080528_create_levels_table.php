@@ -20,6 +20,7 @@ class CreateLevelsTable extends Migration
             $table->integer('bonus_id')->unsigned();
             $table->foreign('bonus_id')->references('id')->on('bonuses');
             $table->integer('product_id')->unsigned();
+            $table->boolean('is_active')->default(true);
             $table->integer('dots_binary')->default(0);
             $table->integer('dots_unilevel')->default(0);
             $table->decimal('amount', 10, 2)->default(0);

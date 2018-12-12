@@ -18,6 +18,8 @@ class UserResume extends Model {
     
     public $timestamps = false;
     
+    protected $primaryKey = 'user_id';
+    
     /**
      * 
      * @return App\Users

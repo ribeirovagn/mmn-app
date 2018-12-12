@@ -14,6 +14,7 @@ class Level extends Model
         'dots_binary',
         'dots_unilevel',
         'amount',
+        'is_active'
     ];
     
     

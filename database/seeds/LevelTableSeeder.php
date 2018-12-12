@@ -52,7 +52,7 @@ class LevelTableSeeder extends Seeder
         ]);
         
         LevelStatus::create([
-            'level_id' => $level1->id,
+            'level_id' => $level2->id,
             'sys_user_status_id' => $ativo->id
         ]);
         
@@ -67,7 +67,7 @@ class LevelTableSeeder extends Seeder
         ]);
         
         LevelStatus::create([
-            'level_id' => $level1->id,
+            'level_id' => $level3->id,
             'sys_user_status_id' => $ativo->id
         ]);
         

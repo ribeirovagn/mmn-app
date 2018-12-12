@@ -10,6 +10,7 @@ use App\GenealogyStatus;
 use App\GenealogyResume;
 use App\Http\Enum\UserStatusEnum;
 use Carbon\Carbon;
+use App\Http\Enum\BinarySideEnum;
 
 class GenealogyController extends Controller {
 
@@ -48,7 +49,7 @@ class GenealogyController extends Controller {
 
             GenealogyStatus::create([
                 'status' => $genealogy->status,
-                'user_id' => $genealogy->user_id,
+                'user_id' => $userCreate->id,
             ]);
 
             GenealogyResume::create([
@@ -66,7 +67,7 @@ class GenealogyController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        return User::with('genealogies')->with('genealogy_statuses')->find($id);
+        return User::with(['genealogies', 'genealogy_statuses', 'genealogy_resume'])->find($id);
     }
 
     /**
@@ -144,11 +145,11 @@ class GenealogyController extends Controller {
     public function binaryPositioning($user_id) {
         try {
             $child = $this->show($user_id);
-            
-            if(!is_null($child->genealogies->father)){
+
+            if (!is_null($child->genealogies->father)) {
                 throw new \Exception("Node already positioned");
             }
-            
+
             if ($child->genealogies->indicator >= 0) {
 
                 $nodes = Genealogy::lastNode($child->genealogies->side, $child->genealogies->indicator);
@@ -159,11 +160,11 @@ class GenealogyController extends Controller {
                     $lastChild = end($nodes);
                     $parent = $this->show($lastChild->child);
                 }
-                
+
                 $child->genealogies->update([
                     'father' => $parent->genealogies->user_id,
                 ]);
-                
+
                 $parent->genealogies->update([
                     'child_' . $child->genealogies->side => $child->genealogies->user_id
                 ]);
@@ -181,9 +182,45 @@ class GenealogyController extends Controller {
     protected function leafs($user_id) {
         return Genealogy::with(['leaf0', 'leaf1'])->find($user_id);
     }
-    
-    public static function indicatorsAsc($node){
+
+    public static function indicatorsAsc($node) {
         return Genealogy::indicatorsAsc($node);
+    }
+
+    public static function nodesAsc($node) {
+        return Genealogy::nodesAsc($node);
+    }
+
+    /**
+     * Altera o lado de um franqueado na rede binaria
+     * @param int $id
+     * @return type
+     * @throws \Exception
+     */
+    public function changeSide($id) {
+        try {
+            $genealogy = Genealogy::find($id);
+
+            if ($genealogy->indicator !== Auth::user()->id) {
+                throw new \Exception('It\'s not indicated by you.');
+            }
+
+            if (!is_null($genealogy->father)) {
+                throw new \Exception('Node already positioned!');
+            }
+
+            $genealogy->update([
+                'side' => ($genealogy->side === BinarySideEnum::LEFT) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT
+            ]);
+
+            return response([
+                'message' => 'Side changed'
+                    ], 200);
+        } catch (\Exception $ex) {
+            return response([
+                'error' => $ex->getMessage()
+                    ], 422);
+        }
     }
 
 }

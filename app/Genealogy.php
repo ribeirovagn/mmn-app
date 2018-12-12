@@ -97,5 +97,28 @@ class Genealogy extends Model {
                     child IS NOT NULL";
         return DB::select(DB::raw($query));
     }
+    
+    
+    public static function nodesAsc($node) {
+        $query = "SELECT 
+                    child, parent, lvl AS level, status, side
+                FROM
+                    (SELECT 
+                        @r AS parent, status, side,
+                            (SELECT 
+                                    @r:=father
+                                FROM
+                                    genealogies
+                                WHERE
+                                    user_id = parent
+                                LIMIT 1) AS child,
+                            @l:=@l + 1 AS lvl
+                    FROM
+                        (SELECT @r:= {$node}, @l:=0, @cl:=0) vars, genealogies
+                    HAVING parent IS NOT NULL) AS h
+                WHERE
+                    child IS NOT NULL";
+        return DB::select(DB::raw($query));
+    }
 
 }

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Transactions;
+use App\TransactionStatus;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class TransactionsController extends Controller
+class TransactionStatusController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +14,7 @@ class TransactionsController extends Controller
      */
     public function index()
     {
-        return Transactions::with(['statuses'])->all();
+        //
     }
 
     /**
@@ -42,21 +41,21 @@ class TransactionsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Transactions  $transactions
+     * @param  \App\TransactionStatus  $transactionStatus
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(TransactionStatus $transactionStatus)
     {
-        return Transactions::with(['statuses'])->where('user_id', '=', Auth::user()->id);
-   }
+        //
+    }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Transactions  $transactions
+     * @param  \App\TransactionStatus  $transactionStatus
      * @return \Illuminate\Http\Response
      */
-    public function edit(Transactions $transactions)
+    public function edit(TransactionStatus $transactionStatus)
     {
         //
     }
@@ -65,10 +64,10 @@ class TransactionsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Transactions  $transactions
+     * @param  \App\TransactionStatus  $transactionStatus
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Transactions $transactions)
+    public function update(Request $request, TransactionStatus $transactionStatus)
     {
         //
     }
@@ -76,10 +75,10 @@ class TransactionsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Transactions  $transactions
+     * @param  \App\TransactionStatus  $transactionStatus
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Transactions $transactions)
+    public function destroy(TransactionStatus $transactionStatus)
     {
         //
     }

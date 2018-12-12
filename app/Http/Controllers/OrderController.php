@@ -102,7 +102,10 @@ class OrderController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        return Order::with('statuses')->with('items')->find($id);
+        return Order::with([
+                    'statuses',
+                    'items'
+                ])->find($id);
     }
 
     /**
@@ -152,7 +155,7 @@ class OrderController extends Controller {
 
             $levelcontroller = new LevelController();
             $productController = new ProductController();
-
+            
             foreach ($order->items as $item) {
 
                 $product = $productController->show($item->product_id);
@@ -161,10 +164,13 @@ class OrderController extends Controller {
                     switch ($product->productType->name) {
                         case "Activation":
                             $this->payActivation($order);
+                            $this->payUnilevel($order, $item);
+                            $this->payBinary($order, $item);
                             break;
 
                         case "Multilevel":
-                            return $this->payMultilevel($order, $item);
+                            $this->payUnilevel($order, $item);
+                            $this->payBinary($order, $item);
                             break;
 
                         case "Voucher":
@@ -236,7 +242,7 @@ class OrderController extends Controller {
      * @return type
      * @throws \Exception
      */
-    protected function payMultilevel($order, $item) {
+    protected function payUnilevel($order, $item) {
         try {
             $levelController = new LevelController();
             $levels = $levelController->show($item->product_id);
@@ -244,14 +250,41 @@ class OrderController extends Controller {
             $indicators = GenealogyController::indicatorsAsc($order->salesman);
             if (count($indicators) > 0) {
                 foreach ($indicators as $indicator) {
-            
-
                     $level = LevelController::betweenNormalize($levels, (int) $indicator->level);
                     if ($level) {
-                        return LevelController::store($level, $indicator, $item);
+                        return BonusController::store($level, $indicator, $item);
                     }
                 }
             }
+   
+            
+        } catch (\Exception $exc) {
+            throw new \Exception('Multilevel ' . $exc->getMessage());
+        }
+    }
+
+    /**
+     * 
+     * @param App\Order $order
+     * @param type $item
+     * @return type
+     * @throws \Exception
+     */
+    protected function payBinary($order, $item) {
+        try {
+            $levelController = new LevelController();
+            $levels = $levelController->show($item->product_id);
+            
+            $nodes = GenealogyController::nodesAsc($order->salesman);
+            if (count($nodes) > 0) {
+                foreach ($nodes as $node) {
+                    $level = LevelController::betweenNormalize($levels, (int) $node->level);
+                    if ($level) {
+                        return LevelController::storeBinary($level, $node, $item);
+                    }
+                }
+            }
+            
         } catch (\Exception $exc) {
             throw new \Exception('Multilevel ' . $exc->getMessage());
         }

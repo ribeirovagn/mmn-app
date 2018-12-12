@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use App\Level;
 use Illuminate\Http\Request;
 
-class LevelController extends Controller
-{
+class LevelController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         return Level::with('statuses')->get();
     }
 
@@ -22,8 +21,7 @@ class LevelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -33,15 +31,13 @@ class LevelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public static function store($level, $indicator, $item)
-    {
-        
-        return [
-            'level' => $level,
-            'indicator' => $indicator,
-            'item' => $item
-        ];
-        
+    public static function store($level, $indicator, $item) {
+
+        try {
+            BonusController::store($level, $indicator, $item);
+        } catch (\Exception $ex) {
+            throw new \Exception($ex->getMessage());
+        }
     }
 
     /**
@@ -50,8 +46,7 @@ class LevelController extends Controller
      * @param  \App\Level  $level
      * @return \Illuminate\Http\Response
      */
-    public function show($product)
-    {
+    public function show($product) {
         return Level::with(['statuses', 'bonus'])->where('product_id', $product)->get();
     }
 
@@ -61,8 +56,7 @@ class LevelController extends Controller
      * @param  \App\Level  $level
      * @return \Illuminate\Http\Response
      */
-    public function edit(Level $level)
-    {
+    public function edit(Level $level) {
         //
     }
 
@@ -73,8 +67,7 @@ class LevelController extends Controller
      * @param  \App\Level  $level
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Level $level)
-    {
+    public function update(Request $request, Level $level) {
         //
     }
 
@@ -84,24 +77,24 @@ class LevelController extends Controller
      * @param  \App\Level  $level
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Level $level)
-    {
+    public function destroy(Level $level) {
         //
     }
-    
+
     /**
      * 
      * @param mixed $levelController
      * @param int $levelSearch
      * @return boolean
      */
-    public static function betweenNormalize($levelController, $levelSearch){
-        foreach ($levelController as $level){
-            if($levelSearch >= (int)$level->start && $levelSearch <= (int)$level->end){
+    public static function betweenNormalize($levelController, $levelSearch) {
+        foreach ($levelController as $level) {
+            if ($levelSearch >= (int) $level->start && $levelSearch <= (int) $level->end) {
                 return $level;
             }
         }
-        
+
         return false;
     }
+
 }
