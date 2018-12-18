@@ -12,13 +12,14 @@ class User extends Authenticatable {
     use HasApiTokens,
         Notifiable;
 
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'username'
     ];
 
     /**
@@ -30,6 +31,7 @@ class User extends Authenticatable {
         'password', 'remember_token',
     ];
 
+        
     /**
      * 
      * @return App\Genealogy
@@ -53,6 +55,5 @@ class User extends Authenticatable {
     public function genealogy_statuses() {
         return $this->hasMany('App\GenealogyStatus');
     }
-    
 
 }

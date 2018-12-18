@@ -5,16 +5,15 @@ namespace App\Http\Controllers;
 use App\DotsBinary;
 use Illuminate\Http\Request;
 
-class DotsBinaryController extends Controller
-{
+class DotsBinaryController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
+    public function index() {
+
     }
 
     /**
@@ -22,8 +21,7 @@ class DotsBinaryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -33,8 +31,7 @@ class DotsBinaryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //
     }
 
@@ -44,9 +41,23 @@ class DotsBinaryController extends Controller
      * @param  \App\DotsBinary  $dotsBinary
      * @return \Illuminate\Http\Response
      */
-    public function show(DotsBinary $dotsBinary)
-    {
-        //
+    public function show($id) {
+        try {
+            $sysBusiness = \App\SysBusiness::first();
+            if ($sysBusiness->binary === 1) {
+                $binary = DotsBinary::where('user_id')->get();
+                return response([
+                    'binary' => $binary
+                ]);
+            }
+            
+            throw new \Exception('Binary is not active');
+        
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -55,8 +66,7 @@ class DotsBinaryController extends Controller
      * @param  \App\DotsBinary  $dotsBinary
      * @return \Illuminate\Http\Response
      */
-    public function edit(DotsBinary $dotsBinary)
-    {
+    public function edit(DotsBinary $dotsBinary) {
         //
     }
 
@@ -67,8 +77,7 @@ class DotsBinaryController extends Controller
      * @param  \App\DotsBinary  $dotsBinary
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DotsBinary $dotsBinary)
-    {
+    public function update(Request $request, DotsBinary $dotsBinary) {
         //
     }
 
@@ -78,8 +87,8 @@ class DotsBinaryController extends Controller
      * @param  \App\DotsBinary  $dotsBinary
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DotsBinary $dotsBinary)
-    {
+    public function destroy(DotsBinary $dotsBinary) {
         //
     }
+
 }

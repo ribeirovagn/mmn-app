@@ -66,7 +66,8 @@ class GenealogyController extends Controller {
      * @param  \App\Genealogy  $genealogy
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
+    public function show($id = null) {
+        $id = is_null($id) ? Auth::user()->id : $id;
         return User::with(['genealogies', 'genealogy_statuses', 'genealogy_resume'])->find($id);
     }
 
@@ -76,7 +77,8 @@ class GenealogyController extends Controller {
      * @param type $id
      * @return type
      */
-    public function indicator($id) {
+    public function indicator($id = null) {
+        $id = is_null($id) ? Auth::user()->id : $id;
         return Genealogy::where('indicator', '=', $id)->with(['user', 'leaf0', 'leaf1'])->get();
     }
 
@@ -99,6 +101,45 @@ class GenealogyController extends Controller {
      */
     public function update(Request $request, Genealogy $genealogy) {
         //
+    }
+
+    /**
+     * 
+     * Testa se um patrocinador é valido
+     * 
+     * @param type $indicator
+     * @return type
+     * @throws \Exception
+     */
+    public function verify($indicator) {
+        try {
+            $user = User::with(['genealogies', 'genealogy_statuses', 'genealogy_resume'])->where('username', '=', $indicator)->first();
+
+            if (!is_null($user)) {
+
+                $sisBussiness = \App\SysBusiness::first();
+
+                if ((int) $sisBussiness->binary === 1) {
+                    if (is_null($user->genealogies->father)) {
+                        return response([
+                            'user' => $user->id,
+                            'message' => 'Binary is valid'
+                                ], 200);
+                    }
+                    throw new \Exception('Is not valid');
+                }
+
+                return response([
+                    'user' => $user,
+                    'message' => 'Unilevel is valid'
+                        ], 200);
+            }
+            throw new \Exception('Indicator not found');
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+                    ], 422);
+        }
     }
 
     /**
@@ -209,12 +250,15 @@ class GenealogyController extends Controller {
                 throw new \Exception('Node already positioned!');
             }
 
+            $side = ($genealogy->side === BinarySideEnum::LEFT) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT;
+
             $genealogy->update([
-                'side' => ($genealogy->side === BinarySideEnum::LEFT) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT
+                'side' => $side
             ]);
 
             return response([
-                'message' => 'Side changed'
+                'message' => 'Side changed to ' . BinarySideEnum::SIDE[$side],
+                'side' => $side
                     ], 200);
         } catch (\Exception $ex) {
             return response([

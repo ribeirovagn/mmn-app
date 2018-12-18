@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Bonus;
 use App\SysBusiness;
 use App\Transactions;
+use App\TransactionStatus;
+use App\Http\Enum\TransactionsStatusEnum;
 use App\UserResume;
 use App\GenealogyResume;
 use App\DotsBinary;
 use App\DotsUnilevel;
+
 use Illuminate\Http\Request;
 use App\Http\Enum\TransactionsTypeEnum;
 
@@ -32,35 +35,7 @@ class BonusController extends Controller {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public static function storeUnilevel($level, $indicator, $item) {
-        try {
-            self::unilevel($level, $indicator, $item);
-        } catch (\Exception $ex) {
-            throw new \Exception($ex->getMessage());
-        }
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public static function storeBinary($level, $indicator, $item) {
-        try {
-            self::binary($level, $indicator, $item);
-        } catch (\Exception $ex) {
-            throw new \Exception($ex->getMessage());
-        }
-    }
-
-    protected static function binary($level, $indicator, $item) {
+    public static function binary($level, $indicator, $item) {
         Transactions::create([
             'type' => TransactionsTypeEnum::BONUS,
             'order_item_id' => $level->bonus->id,
@@ -70,7 +45,7 @@ class BonusController extends Controller {
         ]);
     }
 
-    protected static function unilevel($level, $indicator, $item) {
+    public static function unilevel($level, $indicator, $item) {
 
         if ($level->amount > 0) {
 
@@ -82,6 +57,11 @@ class BonusController extends Controller {
                         'value' => $level->amount,
                         'status' => $indicator->status
             ]);
+            
+            TransactionStatus::create([
+                'transaction_id' => $transaction->id,
+                'status' => TransactionsStatusEnum::SUCCESS
+            ]);
 
             $userResume = UserResume::find($transaction->user_id);
             $userResume->increment('amount', $transaction->value);
@@ -90,7 +70,7 @@ class BonusController extends Controller {
 
         if ($level->dots_unilevel > 0) {
             $dotsUnilevel = DotsUnilevel::create([
-                        'user_id' => $transaction->user_id,
+                        'user_id' => $indicator->parent,
                         'dots' => $level->dots_unilevel,
                         'status' => $indicator->status,
                         'type' => 1,

@@ -17,14 +17,21 @@ Route::resource('user', 'UserController')->except([
     'create', 'destroy'
 ]);
 
+
+Route::get('oauth/logout', 'UserController@logoutApi')->middleware('auth:api');
+Route::get('genealogy/verify/{indicator}', 'GenealogyController@verify');
+
 Route::group([
     'prefix' => 'genealogy',
     'middleware' => 'auth:api'
         ], function() {
+    Route::get('/show', 'GenealogyController@show')->name('genealogy.show');
     Route::get('/show/{id}', 'GenealogyController@show')->name('genealogy.show');
+    Route::get('/indicator', 'GenealogyController@indicator')->name('genealogy.indicator');
     Route::get('/indicator/{id}', 'GenealogyController@indicator')->name('genealogy.indicator');
-    Route::get('/change-side/{id}', 'GenealogyController@changeSide')->name('genealogy.change-side');
+    Route::put('/change-side/{id}', 'GenealogyController@changeSide')->name('genealogy.change-side');
     Route::get('/', 'GenealogyController@index')->name('genealogies');
+    
    
     Route::group([
         'prefix' => 'resume'
@@ -41,6 +48,16 @@ Route::group([
     Route::get('/type/{id}', 'ProductTypeController@show')->name('product.type.id');
     Route::get('/type', 'ProductTypeController@index')->name('product.type');
     Route::get('/', 'ProductController@index')->name('products');
+});
+
+Route::group([
+    'prefix' => 'dots',
+    'middleware' => 'auth:api'
+        ], function() {
+    Route::get('binary/show', 'DotsBinaryController@show')->name('dots.binary');
+    Route::get('binary/show/{id}', 'DotsBinaryController@show')->name('dots.binary');
+    Route::get('unilevel/show', 'DotsUnilevelController@show')->name('dots.unilevel');
+    Route::get('unilevel/show/{id}', 'DotsUnilevelController@show')->name('dots.unilevel');
 });
 
 Route::group([

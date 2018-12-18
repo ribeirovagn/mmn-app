@@ -43,6 +43,7 @@ class OrderController extends Controller {
         DB::beginTransaction();
         try {
 
+            $requestProducts = $request->all();
             $value_fiat = 0;
 
             $genealogyController = new GenealogyController();
@@ -58,7 +59,7 @@ class OrderController extends Controller {
 
             OrderStatusController::store($order);
 
-            foreach ($request->products as $products) {
+            foreach ($requestProducts as $products) {
 
                 $product = Product::findOrFail($products['id']);
 
@@ -101,7 +102,8 @@ class OrderController extends Controller {
      * @param  \App\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
+    public function show($id = null) {
+        $id = (is_null($id)) ? Auth::user()->id : $id;
         return Order::with([
                     'statuses',
                     'items'
@@ -150,7 +152,7 @@ class OrderController extends Controller {
             $order = $this->show($id);
 
             if ($order->status === OrderStatusEnum::PAID) {
-                throw new \Exception("Pedido já foi pago!");
+                throw new \Exception("Order already paid!");
             }
 
             $levelcontroller = new LevelController();
@@ -252,7 +254,7 @@ class OrderController extends Controller {
                 foreach ($indicators as $indicator) {
                     $level = LevelController::betweenNormalize($levels, (int) $indicator->level);
                     if ($level) {
-                        return BonusController::store($level, $indicator, $item);
+                        return BonusController::unilevel($level, $indicator, $item);
                     }
                 }
             }
@@ -280,7 +282,7 @@ class OrderController extends Controller {
                 foreach ($nodes as $node) {
                     $level = LevelController::betweenNormalize($levels, (int) $node->level);
                     if ($level) {
-                        return LevelController::storeBinary($level, $node, $item);
+                        return LevelController::binary($level, $node, $item);
                     }
                 }
             }

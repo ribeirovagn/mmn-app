@@ -7,6 +7,7 @@ use App\User;
 use App\UserResume;
 use Illuminate\Support\Facades\DB;
 use App\Http\Enum\UserStatusEnum;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller {
 
@@ -40,7 +41,8 @@ class UserController extends Controller {
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
-            'indicator' => 'required'
+            'indicator' => 'required',
+            'username' => 'required|unique:users'
         ]);
 
         DB::beginTransaction();
@@ -48,10 +50,11 @@ class UserController extends Controller {
 
             $userCreate = User::create([
                         'name' => $request->name,
+                        'username' => $request->username,
                         'email' => $request->email,
                         'password' => bcrypt($request->password)
             ]);
-            
+
             UserResume::create([
                 'user_id' => $userCreate->id
             ]);
@@ -63,7 +66,7 @@ class UserController extends Controller {
 
             return response([
                 'user' => $GenealogyController->show($userCreate->id)
-            ], 201);
+                    ], 201);
         } catch (\Exception $ex) {
             DB::rollBack();
             return response($ex->getMessage(), 422);
@@ -109,6 +112,15 @@ class UserController extends Controller {
      */
     public function destroy($id) {
         //
+    }
+
+    public function logoutApi() {
+        if (Auth::check()) {
+            return DB::table('oauth_access_tokens')->where('user_id', '=', Auth::user()->id)->delete();
+        }
+        return response([
+            'error' => 'ERROR'
+        ], 422);
     }
 
 }

@@ -16,4 +16,8 @@ class Order extends Model
         return $this->hasMany('App\OrderItem');
     }
     
+    public function levels(){
+        return $this->hasManyThrough('App\Level', 'App\OrderItem', 'product_id', 'product_id', 'id', 'products_id');
+    }
+    
 }

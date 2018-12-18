@@ -22,6 +22,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('order_item_id')->nullable();
             $table->decimal('value', 10, 2);
             $table->tinyInteger('status');
+            $table->integer('level')->nullable();
             $table->timestamps();
         });
     }
