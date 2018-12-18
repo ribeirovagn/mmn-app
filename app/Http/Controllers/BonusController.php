@@ -11,7 +11,6 @@ use App\UserResume;
 use App\GenealogyResume;
 use App\DotsBinary;
 use App\DotsUnilevel;
-
 use Illuminate\Http\Request;
 use App\Http\Enum\TransactionsTypeEnum;
 
@@ -36,13 +35,21 @@ class BonusController extends Controller {
     }
 
     public static function binary($level, $indicator, $item) {
-        Transactions::create([
-            'type' => TransactionsTypeEnum::BONUS,
-            'order_item_id' => $level->bonus->id,
-            'references_id' => $item->id,
-            'value' => $level->amount,
-            'status' => $indicator->status
-        ]);
+        if ($level->dots_binary > 0) {
+            $DotsBinary = DotsBinary::create([
+                        'user_id' => $indicator->parent,
+                        'status' => $indicator->status,
+                        'description' => '',
+                        'order_item_id' => $item->id,
+                        'dots' => $level->dots_binary,
+                        'side' => $indicator->side,
+                        'level' => $indicator->level,
+            ]);
+
+
+            $genealogyResume = GenealogyResume::find($DotsBinary->user_id);
+            $genealogyResume->increment('dots_binary_' . $DotsBinary->side, $DotsBinary->dots);
+        }
     }
 
     public static function unilevel($level, $indicator, $item) {
@@ -57,7 +64,7 @@ class BonusController extends Controller {
                         'value' => $level->amount,
                         'status' => $indicator->status
             ]);
-            
+
             TransactionStatus::create([
                 'transaction_id' => $transaction->id,
                 'status' => TransactionsStatusEnum::SUCCESS

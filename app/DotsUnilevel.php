@@ -15,4 +15,9 @@ class DotsUnilevel extends Model
         'type',
         'level'
     ];
+    
+    
+    public function genealogy_resume(){
+        return $this->hasOne('App\GenealogyResume', 'user_id');
+    }
 }

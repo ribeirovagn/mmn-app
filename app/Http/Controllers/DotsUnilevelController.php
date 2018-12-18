@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DotsUnilevel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DotsUnilevelController extends Controller
 {
@@ -44,9 +45,26 @@ class DotsUnilevelController extends Controller
      * @param  \App\DotsUnilevel  $dotsUnilevel
      * @return \Illuminate\Http\Response
      */
-    public function show(DotsUnilevel $dotsUnilevel)
-    {
-        //
+   public function show($id = null) {
+        try {
+            $id = is_null($id) ? Auth::user()->id : $id;
+            $sysBusiness = \App\SysBusiness::first();
+            if ((int)$sysBusiness->unilevel === 1) {
+                $binary = DotsUnilevel::where('user_id', '=', $id)->get();
+                return response([
+                    'unilevel' => $binary,
+                    'genealogy_resume' => \App\GenealogyResume::find($id),
+                    'status' => \App\Http\Enum\UserStatusEnum::STATUS,
+                ]);
+            }
+            
+            throw new \Exception('Unilevel is not active');
+        
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+            ]);
+        }
     }
 
     /**

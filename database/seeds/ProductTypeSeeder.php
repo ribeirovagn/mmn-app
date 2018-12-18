@@ -43,7 +43,7 @@ class ProductTypeSeeder extends Seeder
             'product_type_id' => $digihash->id,
             'name' => 'DigiHash',
             'description' => '21 MH/s Poder de mineração',
-            'value' => 300
+            'value' => 900
         ]);
                 
         
@@ -56,7 +56,7 @@ class ProductTypeSeeder extends Seeder
             'product_type_id' => $voucher->id,
             'name' => 'Voucher',
             'description' => 'DigiPartner - Pacote de ativação',
-            'value' => 300
+            'value' => 50
         ]);
     }
     

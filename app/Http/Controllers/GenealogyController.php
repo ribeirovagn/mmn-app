@@ -114,13 +114,12 @@ class GenealogyController extends Controller {
     public function verify($indicator) {
         try {
             $user = User::with(['genealogies', 'genealogy_statuses', 'genealogy_resume'])->where('username', '=', $indicator)->first();
-
             if (!is_null($user)) {
 
                 $sisBussiness = \App\SysBusiness::first();
 
                 if ((int) $sisBussiness->binary === 1) {
-                    if (is_null($user->genealogies->father)) {
+                    if (!is_null($user->genealogies->father)) {
                         return response([
                             'user' => $user->id,
                             'message' => 'Binary is valid'

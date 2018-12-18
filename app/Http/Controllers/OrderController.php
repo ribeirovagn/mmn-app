@@ -282,7 +282,7 @@ class OrderController extends Controller {
                 foreach ($nodes as $node) {
                     $level = LevelController::betweenNormalize($levels, (int) $node->level);
                     if ($level) {
-                        return LevelController::binary($level, $node, $item);
+                        return BonusController::binary($level, $node, $item);
                     }
                 }
             }

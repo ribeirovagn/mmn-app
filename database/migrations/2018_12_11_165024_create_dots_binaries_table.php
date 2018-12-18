@@ -17,7 +17,7 @@ class CreateDotsBinariesTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->tinyInteger('status');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->integer('order_item_id')->unsigned();
             $table->integer('dots');
             $table->integer('side');

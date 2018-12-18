@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DotsBinary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DotsBinaryController extends Controller {
 
@@ -41,11 +42,12 @@ class DotsBinaryController extends Controller {
      * @param  \App\DotsBinary  $dotsBinary
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
+    public function show($id = null) {
         try {
+            $id = is_null($id) ? Auth::user()->id : $id;
             $sysBusiness = \App\SysBusiness::first();
-            if ($sysBusiness->binary === 1) {
-                $binary = DotsBinary::where('user_id')->get();
+            if ((int)$sysBusiness->binary === 1) {
+                $binary = DotsBinary::where('user_id', '=', $id)->get();
                 return response([
                     'binary' => $binary
                 ]);
