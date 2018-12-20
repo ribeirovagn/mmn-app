@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBonusesTable extends Migration
+class CreateConfigBinariesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateBonusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('bonuses', function (Blueprint $table) {
+        Schema::create('config_binaries', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', 80);
-            $table->text('description')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->string('interval');
+            $table->decimal('percentage', 5,2);
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateBonusesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bonuses');
+        Schema::dropIfExists('config_binaries');
     }
 }

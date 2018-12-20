@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
+use App\ConfigBinary;
 use Illuminate\Http\Request;
+use App\Http\Enum\ConfigBinaryEnum;
 
-class ProductController extends Controller
+class ConfigBinaryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::with('productType')->get();
+        //
     }
 
     /**
@@ -37,25 +38,29 @@ class ProductController extends Controller
     {
         //
     }
+    
+    public function schedule(){
+        return ConfigBinaryEnum::SCHEDULY;
+    }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  \App\ConfigBinary  $configBinary
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ConfigBinary $configBinary)
     {
-        return Product::with(['productType', 'levels'])->find($id);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  \App\ConfigBinary  $configBinary
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(ConfigBinary $configBinary)
     {
         //
     }
@@ -64,10 +69,10 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
+     * @param  \App\ConfigBinary  $configBinary
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, ConfigBinary $configBinary)
     {
         //
     }
@@ -75,12 +80,11 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Product  $product
+     * @param  \App\ConfigBinary  $configBinary
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(ConfigBinary $configBinary)
     {
         //
     }
-    
 }

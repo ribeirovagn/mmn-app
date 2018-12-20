@@ -5,16 +5,15 @@ namespace App\Http\Controllers;
 use App\SysBusiness;
 use Illuminate\Http\Request;
 
-class SysBusinessController extends Controller
-{
+class SysBusinessController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
+    public function index() {
+        return SysBusiness::first();
     }
 
     /**
@@ -22,8 +21,7 @@ class SysBusinessController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -33,8 +31,7 @@ class SysBusinessController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //
     }
 
@@ -44,8 +41,7 @@ class SysBusinessController extends Controller
      * @param  \App\SysBusiness  $sysBusiness
      * @return \Illuminate\Http\Response
      */
-    public static function show()
-    {
+    public static function show() {
         return SysBusiness::first();
     }
 
@@ -55,8 +51,7 @@ class SysBusinessController extends Controller
      * @param  \App\SysBusiness  $sysBusiness
      * @return \Illuminate\Http\Response
      */
-    public function edit(SysBusiness $sysBusiness)
-    {
+    public function edit(SysBusiness $sysBusiness) {
         //
     }
 
@@ -67,9 +62,16 @@ class SysBusinessController extends Controller
      * @param  \App\SysBusiness  $sysBusiness
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SysBusiness $sysBusiness)
-    {
-        //
+    public function update(Request $request) {
+        try {
+            $sysBusiness = SysBusiness::first();
+            $sysBusiness->update($request->all());
+            return response($sysBusiness, 200);
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+                    ], 422);
+        }
     }
 
     /**
@@ -78,8 +80,8 @@ class SysBusinessController extends Controller
      * @param  \App\SysBusiness  $sysBusiness
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SysBusiness $sysBusiness)
-    {
+    public function destroy(SysBusiness $sysBusiness) {
         //
     }
+
 }

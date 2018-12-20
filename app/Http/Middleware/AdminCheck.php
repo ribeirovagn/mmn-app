@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class AdminCheck
 {
@@ -15,6 +16,13 @@ class AdminCheck
      */
     public function handle($request, Closure $next)
     {
+        if(Auth::check()){
+            if(Auth::user()->is_admin === 0){
+                throw new \Exception('Operation is not permited!');
+            }
+        }
+        
+        
         return $next($request);
     }
 }

@@ -17,6 +17,7 @@ class CreateSysBusinessesTable extends Migration
             $table->increments('id');
             $table->boolean('binary')->default(true);
             $table->boolean('unilevel')->default(true);
+            $table->boolean('leadership_balance')->default(false);
             $table->timestamps();
         });
     }

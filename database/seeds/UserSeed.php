@@ -26,6 +26,14 @@ class UserSeed extends Seeder {
                     'password' => bcrypt('zaq12wsx')
         ]);
         
+        User::create([
+                    'name' => 'Administrator',
+                    'email' => 'admin@demo.com',
+                    'username' => 'admin',
+                    'is_admin' => true,
+                    'password' => bcrypt('zaq12wsx')
+        ]);
+        
         UserResume::create([
             'user_id' => $userCreate->id
         ]);

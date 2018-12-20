@@ -31,10 +31,16 @@ class LevelController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public static function store($level, $indicator, $item) {
+    public function store(Request $request) {
 
         try {
-            BonusController::store($level, $indicator, $item);
+
+            $level = Level::create($request->all());
+
+
+            return response([
+                $request->all()
+            ]);
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage());
         }
@@ -77,8 +83,15 @@ class LevelController extends Controller {
      * @param  \App\Level  $level
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Level $level) {
-        //
+    public function destroy($id) {
+        try {
+            \App\LevelStatus::where('level_id', '=', $id)->delete();
+            Level::find($id)->delete();
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+            ]);
+        }
     }
 
     /**
