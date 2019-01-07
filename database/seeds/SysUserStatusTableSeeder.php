@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\SysUserStatus;
+use App\Http\Enum\UserStatusEnum;
 
 class SysUserStatusTableSeeder extends Seeder
 {
@@ -14,16 +15,20 @@ class SysUserStatusTableSeeder extends Seeder
     {
         
         SysUserStatus::create([
-            'name' => 'Pending'
+            'id' => UserStatusEnum::INIT,
+            'name' => UserStatusEnum::STATUS[UserStatusEnum::INIT]
         ]);
-        
         SysUserStatus::create([
-            'name' => 'Active'
+            'id' => UserStatusEnum::PENDING,
+            'name' => UserStatusEnum::STATUS[UserStatusEnum::PENDING]
         ]);
-        
         SysUserStatus::create([
-            'name' => 'Canceled'
+            'id' => UserStatusEnum::ACTIVE,
+            'name' => UserStatusEnum::STATUS[UserStatusEnum::ACTIVE]
         ]);
-        
+        SysUserStatus::create([
+            'id' => UserStatusEnum::CANCELED,
+            'name' => UserStatusEnum::STATUS[UserStatusEnum::CANCELED]
+        ]);
     }
 }

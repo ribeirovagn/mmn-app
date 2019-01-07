@@ -16,6 +16,7 @@ class CreateGenealogyResumesTable extends Migration {
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('indicated')->default(0);
+            $table->integer('graduations_id')->default(1);
             $table->integer('dots_unilevel')->default(0);
             $table->integer('dots_binary_0')->default(0);
             $table->integer('dots_binary_1')->default(0);

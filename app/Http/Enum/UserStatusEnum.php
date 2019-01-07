@@ -16,10 +16,10 @@ namespace App\Http\Enum;
  */
 abstract class UserStatusEnum {
 
-    const INIT = 0;
-    const PENDING = 1;
-    const ACTIVE = 2;
-    const CANCELED = 3;
+    const INIT = 1;
+    const PENDING = 2;
+    const ACTIVE = 3;
+    const CANCELED = 4;
 
     /***/
     const STATUS = [

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBinaryRulesTable extends Migration
+class CreateGraduationsLevelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class CreateBinaryRulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('binary_rules', function (Blueprint $table) {
+        Schema::create('graduations_levels', function (Blueprint $table) {
             $table->increments('id');
-            $table->boolean('is_binary')->default(true);
+            $table->integer('graduation_id')->unsigned();
+            $table->foreign('graduation_id')->references('id')->on('graduations');
+            $table->tinyInteger('quantity')->default(0);
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ class CreateBinaryRulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('binary_rules');
+        Schema::dropIfExists('graduations_levels');
     }
 }

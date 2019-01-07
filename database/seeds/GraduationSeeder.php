@@ -36,7 +36,7 @@ class GraduationSeeder extends Seeder {
         ]);
         
         Graduation::create([
-            'name' => 'Gold',
+            'name' => 'Emerald',
             'ordinal' => 4,
             'limit' => 99999,
             'dots_start' => 1500,

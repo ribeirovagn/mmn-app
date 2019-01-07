@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Level;
 use App\LevelStatus;
 use App\SysUserStatus;
+use App\Http\Enum\UserStatusEnum;
 
 class LevelTableSeeder extends Seeder
 {
@@ -14,17 +15,7 @@ class LevelTableSeeder extends Seeder
      */
     public function run()
     {
-        
-        SysUserStatus::create([
-            'name' => 'Pendente'
-        ]);
-        $ativo = SysUserStatus::create([
-            'name' => 'Ativo'
-        ]);
-        SysUserStatus::create([
-            'name' => 'Cancelado'
-        ]);        
-        
+
         
         $level1 = Level::create([
             'bonus_id' => 4,
@@ -38,7 +29,7 @@ class LevelTableSeeder extends Seeder
         
         LevelStatus::create([
             'level_id' => $level1->id,
-            'sys_user_status_id' => $ativo->id
+            'sys_user_status_id' => UserStatusEnum::ACTIVE
         ]);
         
         $level2 = Level::create([
@@ -53,7 +44,7 @@ class LevelTableSeeder extends Seeder
         
         LevelStatus::create([
             'level_id' => $level2->id,
-            'sys_user_status_id' => $ativo->id
+            'sys_user_status_id' => UserStatusEnum::ACTIVE
         ]);
         
         $level3 = Level::create([
@@ -68,7 +59,7 @@ class LevelTableSeeder extends Seeder
         
         LevelStatus::create([
             'level_id' => $level3->id,
-            'sys_user_status_id' => $ativo->id
+            'sys_user_status_id' => UserStatusEnum::ACTIVE
         ]);
         
     }

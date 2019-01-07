@@ -42,6 +42,13 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => 'user',
+    'middleware' => 'auth:api'
+        ], function() {
+    Route::get('/resume', 'UserResumeController@show')->name('user.resume');
+});
+
+Route::group([
     'prefix' => 'product',
     'middleware' => 'auth:api'
         ], function() {
@@ -65,8 +72,9 @@ Route::group([
     'middleware' => 'auth:api'
         ], function() {
     Route::post('/', 'OrderController@store')->name('order.store');
-    Route::get('/', 'OrderController@index')->name('orders');
+    Route::get('/show-by-user', 'OrderController@showByUser')->name('order.showByUser');
     Route::get('/{id}', 'OrderController@show')->name('order.show');
+    Route::get('/', 'OrderController@index')->name('orders');
     Route::put('pay/{id}', 'OrderController@pay')->name('order.show');
 });
 

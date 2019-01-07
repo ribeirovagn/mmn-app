@@ -56,7 +56,7 @@ class GenealogyController extends Controller {
                 'user_id' => $userCreate->id
             ]);
         } catch (\Exception $ex) {
-            return $ex->getMessage();
+            throw new \Exception($ex->getTrace());
         }
     }
 
@@ -119,7 +119,7 @@ class GenealogyController extends Controller {
                 $sisBussiness = \App\SysBusiness::first();
 
                 if ((int) $sisBussiness->binary === 1) {
-                    if (!is_null($user->genealogies->father)) {
+                    if (!is_null($user->genealogies->father) || $user->genealogies->indicator === 0) {
                         return response([
                             'user' => $user->id,
                             'message' => 'Binary is valid'

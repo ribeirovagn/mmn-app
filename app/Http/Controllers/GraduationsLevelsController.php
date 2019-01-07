@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\UserResume;
+use App\GraduationsLevels;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class UserResumeController extends Controller
+class GraduationsLevelsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -42,22 +41,21 @@ class UserResumeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\UserResume  $userResume
+     * @param  \App\GraduationsLevels  $graduationsLevels
      * @return \Illuminate\Http\Response
      */
-    public function show($id = null)
+    public function show(GraduationsLevels $graduationsLevels)
     {
-        $id = (is_null($id) ? Auth::user()->id : $id);
-        return UserResume::find($id);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\UserResume  $userResume
+     * @param  \App\GraduationsLevels  $graduationsLevels
      * @return \Illuminate\Http\Response
      */
-    public function edit(UserResume $userResume)
+    public function edit(GraduationsLevels $graduationsLevels)
     {
         //
     }
@@ -66,10 +64,10 @@ class UserResumeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\UserResume  $userResume
+     * @param  \App\GraduationsLevels  $graduationsLevels
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UserResume $userResume)
+    public function update(Request $request, GraduationsLevels $graduationsLevels)
     {
         //
     }
@@ -77,10 +75,10 @@ class UserResumeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\UserResume  $userResume
+     * @param  \App\GraduationsLevels  $graduationsLevels
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserResume $userResume)
+    public function destroy(GraduationsLevels $graduationsLevels)
     {
         //
     }

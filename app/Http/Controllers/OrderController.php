@@ -21,7 +21,7 @@ class OrderController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        return Order::with('statuses')->with('items')->where('user_id', '=', Auth::user()->id)->get();
+        return Order::with('statuses')->with('items')->get();
     }
 
     /**
@@ -96,6 +96,7 @@ class OrderController extends Controller {
         }
     }
 
+
     /**
      * Display the specified resource.
      *
@@ -108,6 +109,17 @@ class OrderController extends Controller {
                     'statuses',
                     'items'
                 ])->find($id);
+    }    
+    
+    
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Order  $order
+     * @return \Illuminate\Http\Response
+     */
+    public function showByUser() {
+        return Order::with(['statuses','items'])->where('user_id', Auth::user()->id)->get();
     }
 
     /**
@@ -182,14 +194,14 @@ class OrderController extends Controller {
                 }
             }
 
-            $updated = $this->updateStatus($order, OrderStatusEnum::PAID);
+//            $updated = $this->updateStatus($order, OrderStatusEnum::PAID);
 
             DB::commit();
-            return response($updated, 200);
+//            return response($updated, 200);
         } catch (\Exception $ex) {
             DB::rollBack();
             return response([
-                'error' => $ex->getMessage()
+                'error' => 'Failure: ' . $ex->getMessage()
                     ], 422);
         }
     }

@@ -5,16 +5,15 @@ namespace App\Http\Controllers;
 use App\Graduation;
 use Illuminate\Http\Request;
 
-class GraduationController extends Controller
-{
+class GraduationController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
+    public function index() {
+        return Graduation::all();
     }
 
     /**
@@ -22,8 +21,7 @@ class GraduationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -33,9 +31,20 @@ class GraduationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        try {
+            $input = $request->all();
+
+            if ($input['dots_start'] > $input['dots_end']) {
+                throw new \Exception('Score end less than score start!');
+            }
+            
+            return Graduation::create($request->all());
+        } catch (Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+                    ], 422);
+        }
     }
 
     /**
@@ -44,8 +53,7 @@ class GraduationController extends Controller
      * @param  \App\Graduation  $graduation
      * @return \Illuminate\Http\Response
      */
-    public function show(Graduation $graduation)
-    {
+    public function show(Graduation $graduation) {
         //
     }
 
@@ -55,8 +63,7 @@ class GraduationController extends Controller
      * @param  \App\Graduation  $graduation
      * @return \Illuminate\Http\Response
      */
-    public function edit(Graduation $graduation)
-    {
+    public function edit(Graduation $graduation) {
         //
     }
 
@@ -67,8 +74,7 @@ class GraduationController extends Controller
      * @param  \App\Graduation  $graduation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Graduation $graduation)
-    {
+    public function update(Request $request, Graduation $graduation) {
         //
     }
 
@@ -78,8 +84,8 @@ class GraduationController extends Controller
      * @param  \App\Graduation  $graduation
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Graduation $graduation)
-    {
+    public function destroy(Graduation $graduation) {
         //
     }
+
 }

@@ -13,8 +13,18 @@ class Genealogy extends Model {
      * @var array
      */
     protected $fillable = [
-        'user_id', 'side', 'indicator', 'father', 'child_0', 'child_1', 'binary', 'preferencial_side', 'date_positioning', 'status'
+        'user_id', 
+        'side', 
+        'indicator', 
+        'father', 
+        'child_0', 
+        'child_1', 
+        'binary', 
+        'preferencial_side', 
+        'date_positioning', 
+        'status'
     ];
+    
     protected $primaryKey = 'user_id';
 
     public function user() {

@@ -8,6 +8,7 @@ use App\UserResume;
 use Illuminate\Support\Facades\DB;
 use App\Http\Enum\UserStatusEnum;
 use Illuminate\Support\Facades\Auth;
+use App\GraduationsHist;
 
 class UserController extends Controller {
 
@@ -62,6 +63,11 @@ class UserController extends Controller {
             $GenealogyController = new GenealogyController();
             $GenealogyController->store($request, $userCreate);
 
+            GraduationsHist::create([
+                'graduation_id' => 1,
+                'user_id' => $userCreate->id
+            ]);
+
             DB::commit();
 
             return response([
@@ -69,7 +75,9 @@ class UserController extends Controller {
                     ], 201);
         } catch (\Exception $ex) {
             DB::rollBack();
-            return response($ex->getMessage(), 422);
+            return response([
+                'error' => $ex->getMessage()
+                    ], 422);
         }
     }
 
@@ -120,7 +128,7 @@ class UserController extends Controller {
         }
         return response([
             'error' => 'ERROR'
-        ], 422);
+                ], 422);
     }
 
 }

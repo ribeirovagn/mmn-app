@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\AditionalBonus' => $baseDir . '/app/AditionalBonus.php',
     'App\\BinaryClosure' => $baseDir . '/app/BinaryClosure.php',
     'App\\BinaryRules' => $baseDir . '/app/BinaryRules.php',
     'App\\Bonus' => $baseDir . '/app/Bonus.php',
@@ -18,6 +19,8 @@ return array(
     'App\\GenealogyResume' => $baseDir . '/app/GenealogyResume.php',
     'App\\GenealogyStatus' => $baseDir . '/app/GenealogyStatus.php',
     'App\\Graduation' => $baseDir . '/app/Graduation.php',
+    'App\\GraduationsHist' => $baseDir . '/app/GraduationsHist.php',
+    'App\\GraduationsLevels' => $baseDir . '/app/GraduationsLevels.php',
     'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
     'App\\Http\\Controllers\\Auth\\LoginController' => $baseDir . '/app/Http/Controllers/Auth/LoginController.php',
     'App\\Http\\Controllers\\Auth\\RegisterController' => $baseDir . '/app/Http/Controllers/Auth/RegisterController.php',
@@ -26,6 +29,7 @@ return array(
     'App\\Http\\Controllers\\BinaryClosureController' => $baseDir . '/app/Http/Controllers/BinaryClosureController.php',
     'App\\Http\\Controllers\\BinaryRulesController' => $baseDir . '/app/Http/Controllers/BinaryRulesController.php',
     'App\\Http\\Controllers\\BonusController' => $baseDir . '/app/Http/Controllers/BonusController.php',
+    'App\\Http\\Controllers\\ConfigBinaryController' => $baseDir . '/app/Http/Controllers/ConfigBinaryController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\DotsBinaryController' => $baseDir . '/app/Http/Controllers/DotsBinaryController.php',
     'App\\Http\\Controllers\\DotsUnilevelController' => $baseDir . '/app/Http/Controllers/DotsUnilevelController.php',
@@ -33,6 +37,7 @@ return array(
     'App\\Http\\Controllers\\GenealogyResumeController' => $baseDir . '/app/Http/Controllers/GenealogyResumeController.php',
     'App\\Http\\Controllers\\GenealogyStatusController' => $baseDir . '/app/Http/Controllers/GenealogyStatusController.php',
     'App\\Http\\Controllers\\GraduationController' => $baseDir . '/app/Http/Controllers/GraduationController.php',
+    'App\\Http\\Controllers\\GraduationsHistController' => $baseDir . '/app/Http/Controllers/GraduationsHistController.php',
     'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
     'App\\Http\\Controllers\\LevelController' => $baseDir . '/app/Http/Controllers/LevelController.php',
     'App\\Http\\Controllers\\LevelStatusController' => $baseDir . '/app/Http/Controllers/LevelStatusController.php',
@@ -51,6 +56,7 @@ return array(
     'App\\Http\\Controllers\\UserController' => $baseDir . '/app/Http/Controllers/UserController.php',
     'App\\Http\\Controllers\\UserResumeController' => $baseDir . '/app/Http/Controllers/UserResumeController.php',
     'App\\Http\\Enum\\BinarySideEnum' => $baseDir . '/app/Http/Enum/BinarySideEnum.php',
+    'App\\Http\\Enum\\ConfigBinaryEnum' => $baseDir . '/app/Http/Enum/ConfigBinaryEnum.php',
     'App\\Http\\Enum\\OrderStatusEnum' => $baseDir . '/app/Http/Enum/OrderStatusEnum.php',
     'App\\Http\\Enum\\TransactionsStatusEnum' => $baseDir . '/app/Http/Enum/TransactionsStatusEnum.php',
     'App\\Http\\Enum\\TransactionsTypeEnum' => $baseDir . '/app/Http/Enum/TransactionsTypeEnum.php',
@@ -3661,6 +3667,7 @@ return array(
     'SysBusinessSeeder' => $baseDir . '/database/seeds/SysBusinessSeeder.php',
     'SysTransactionsStatusSeeder' => $baseDir . '/database/seeds/SysTransactionsStatusSeeder.php',
     'SysTransactionsTypeSeeder' => $baseDir . '/database/seeds/SysTransactionsTypeSeeder.php',
+    'SysUserStatusTable' => $baseDir . '/database/seeds/SysUserStatusTable.php',
     'SysUserStatusTableSeeder' => $baseDir . '/database/seeds/SysUserStatusTableSeeder.php',
     'Tests\\CreatesApplication' => $baseDir . '/tests/CreatesApplication.php',
     'Tests\\Feature\\ExampleTest' => $baseDir . '/tests/Feature/ExampleTest.php',
