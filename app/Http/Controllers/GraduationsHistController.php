@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\GraduationsHist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GraduationsHistController extends Controller
 {
@@ -44,9 +45,10 @@ class GraduationsHistController extends Controller
      * @param  \App\GraduationsHist  $graduationsHist
      * @return \Illuminate\Http\Response
      */
-    public function show(GraduationsHist $graduationsHist)
+    public function show($user_id = null)
     {
-        //
+        $user_id = is_null($user_id) ? Auth::user()->id : $user_id;
+        return GraduationsHist::where('user_id', $user_id)->get();
     }
 
     /**

@@ -114,21 +114,8 @@ class BonusController extends Controller {
             throw \Exception('Bonus Unilevel Exception');
         }        
         
+        DotsUnilevelController::show($level, $indicator, $item);
         
-        if ($level->dots_unilevel > 0) {
-            $dotsUnilevel = DotsUnilevel::create([
-                        'user_id' => $indicator->parent,
-                        'dots' => $level->dots_unilevel,
-                        'status' => $indicator->status,
-                        'type' => 1,
-                        'level' => $indicator->level,
-                        'references_id' => $item->id,
-                        'description' => ''
-            ]);
-
-            $genealogyResume = GenealogyResume::find($dotsUnilevel->user_id);
-            $genealogyResume->increment('dots_unilevel', $dotsUnilevel->dots);
-        }
     }
 
 

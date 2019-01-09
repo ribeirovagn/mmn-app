@@ -42,7 +42,7 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'user',
+    'prefix' => 'users',
     'middleware' => 'auth:api'
         ], function() {
     Route::get('/resume', 'UserResumeController@show')->name('user.resume');
@@ -91,4 +91,12 @@ Route::group([
         ], function() {
     Route::get('/', 'BonusController@index');
     Route::get('/{id}', 'BonusController@show');
+});
+
+
+Route::group([
+    'prefix', 'graduation',
+    'middleware' => 'auth:api'
+        ], function() {
+    Route::get('/hist', 'GraduationsHistController@show');
 });

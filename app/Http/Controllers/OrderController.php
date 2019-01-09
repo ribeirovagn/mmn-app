@@ -194,10 +194,10 @@ class OrderController extends Controller {
                 }
             }
 
-//            $updated = $this->updateStatus($order, OrderStatusEnum::PAID);
+            $updated = $this->updateStatus($order, OrderStatusEnum::PAID);
 
             DB::commit();
-//            return response($updated, 200);
+            return response($updated, 200);
         } catch (\Exception $ex) {
             DB::rollBack();
             return response([

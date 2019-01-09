@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Graduation;
+use App\GraduationsHist;
+use App\GenealogyResume;
 use Illuminate\Http\Request;
 
 class GraduationController extends Controller {
@@ -13,7 +15,7 @@ class GraduationController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        return Graduation::all();
+        return Graduation::orderBy('ordinal', 'asc')->get();
     }
 
     /**
@@ -21,8 +23,34 @@ class GraduationController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() {
-        //
+    public function create($user_id) {
+        $genealogyResumes = GenealogyResume::find($user_id);
+        $graduationsHists = GraduationsHist::with('graduation')->where('user_id', $user_id)->orderBy('graduation_id', 'desc')->first();
+
+        if ($genealogyResumes->dots_unilevel > $graduationsHists->graduation->dots_end) {
+            $graduations = Graduation::where('ordinal', '>', $graduationsHists->graduation->ordinal)->get();
+            foreach ($graduations as $graduation) {
+                
+                if($graduation->dots_start >= $genealogyResumes->dots_unilevel){
+                    break;
+                }
+                
+                $genealogyResumes->update([
+                    'graduations_id' => $graduation->id
+                ]);
+                
+                GraduationsHist::create([
+                    'user_id' => $user_id,
+                    'graduation_id' => $graduation->id
+                ]);
+                
+            }
+        }
+
+
+
+
+        return $graduationsHists;
     }
 
     /**
@@ -38,7 +66,7 @@ class GraduationController extends Controller {
             if ($input['dots_start'] > $input['dots_end']) {
                 throw new \Exception('Score end less than score start!');
             }
-            
+
             return Graduation::create($request->all());
         } catch (Exception $exc) {
             return response([
