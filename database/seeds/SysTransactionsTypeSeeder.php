@@ -20,6 +20,9 @@ class SysTransactionsTypeSeeder extends Seeder
             'name' => TransactionsTypeEnum::TYPE[TransactionsTypeEnum::WITHDRAW]
         ]);
         SysTransactionsType::create([
+            'name' => TransactionsTypeEnum::TYPE[TransactionsTypeEnum::WITHDRAW_TAX]
+        ]);
+        SysTransactionsType::create([
             'name' => TransactionsTypeEnum::TYPE[TransactionsTypeEnum::REVERSAL]
         ]);
         SysTransactionsType::create([

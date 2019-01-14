@@ -29,6 +29,8 @@ Route::group([
     Route::get('/show/{id}', 'GenealogyController@show')->name('genealogy.show');
     Route::get('/indicator', 'GenealogyController@indicator')->name('genealogy.indicator');
     Route::get('/indicator/{id}', 'GenealogyController@indicator')->name('genealogy.indicator');
+    Route::get('/family', 'GenealogyController@family')->name('genealogy.family');
+    Route::get('/family/{id}', 'GenealogyController@family')->name('genealogy.family');
     Route::put('/change-side/{id}', 'GenealogyController@changeSide')->name('genealogy.change-side');
     Route::get('/', 'GenealogyController@index')->name('genealogies');
     
@@ -36,6 +38,7 @@ Route::group([
     Route::group([
         'prefix' => 'resume'
             ], function() {
+        Route::get('/binary', 'GenealogyResumeController@show')->name('genealogies.resume.binary');
         Route::get('/{id}', 'GenealogyResumeController@show')->name('genealogies.resume.show');
         Route::get('/', 'GenealogyResumeController@index')->name('genealogies.resume');
     });
@@ -46,6 +49,14 @@ Route::group([
     'middleware' => 'auth:api'
         ], function() {
     Route::get('/resume', 'UserResumeController@show')->name('user.resume');
+});
+
+Route::group([
+    'prefix' => 'financial',
+    'middleware' => 'auth:api'
+        ], function() {
+    Route::get('/withdraw', 'TransactionsController@listWithdraw')->name('financial.listWithdraw');
+    Route::post('/withdraw', 'UserResumeController@withdraw')->name('financial.withdraw');
 });
 
 Route::group([

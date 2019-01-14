@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Enum\TransactionsTypeEnum;
 
 class TransactionsController extends Controller
 {
@@ -82,5 +83,14 @@ class TransactionsController extends Controller
     public function destroy(Transactions $transactions)
     {
         //
+    }
+    
+    
+    public function listWithdraw(){
+        return Transactions::with('statuses')
+                ->where('user_id', Auth::user()->id)
+                ->where('type', TransactionsTypeEnum::WITHDRAW)
+                ->orderBy('created_at', 'desc')
+                ->get();
     }
 }

@@ -17,12 +17,14 @@ namespace App\Http\Enum;
 abstract class TransactionsTypeEnum {
     const BONUS = 1;
     const WITHDRAW = 2;
-    const REVERSAL = 3;
-    const PAYMENT = 4;
+    const WITHDRAW_TAX = 3;
+    const REVERSAL = 4;
+    const PAYMENT = 5;
     
     const TYPE = [
         self::BONUS => 'BONUS',
         self::WITHDRAW => 'WITHDRAW',
+        self::WITHDRAW_TAX => 'WITHDRAW TAX',
         self::REVERSAL => 'REVERSAL',
         self::PAYMENT => 'PAYMENT',
     ];

@@ -13,18 +13,17 @@ class Genealogy extends Model {
      * @var array
      */
     protected $fillable = [
-        'user_id', 
-        'side', 
-        'indicator', 
-        'father', 
-        'child_0', 
-        'child_1', 
-        'binary', 
-        'preferencial_side', 
-        'date_positioning', 
+        'user_id',
+        'side',
+        'indicator',
+        'father',
+        'child_0',
+        'child_1',
+        'binary',
+        'preferencial_side',
+        'date_positioning',
         'status'
     ];
-    
     protected $primaryKey = 'user_id';
 
     public function user() {
@@ -53,6 +52,10 @@ class Genealogy extends Model {
      */
     public function leaf1() {
         return $this->hasOne('App\Genealogy', 'user_id', 'child_1');
+    }
+
+    public function children() {
+        return $this->hasMany('App\Genealogy', 'indicator');
     }
 
     /**
@@ -107,8 +110,7 @@ class Genealogy extends Model {
                     child IS NOT NULL";
         return DB::select(DB::raw($query));
     }
-    
-    
+
     public static function nodesAsc($node) {
         $query = "SELECT 
                     child, parent, lvl AS level, status, side

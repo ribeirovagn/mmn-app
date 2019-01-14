@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\GenealogyResume;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GenealogyResumeController extends Controller
 {
@@ -44,9 +45,10 @@ class GenealogyResumeController extends Controller
      * @param  \App\GenealogyResume  $genealogyResume
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id = null)
     {
-        return GenealogyResume::with('user')->where('user_id', $id)->first();
+        $id = is_null($id) ? Auth::user()->id : $id;
+        return GenealogyResume::with(['user'])->findOrFail($id);
     }
 
     /**

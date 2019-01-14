@@ -49,7 +49,10 @@ class DotsBinaryController extends Controller {
             if ((int)$sysBusiness->binary === 1) {
                 $binary = DotsBinary::where('user_id', '=', $id)->get();
                 return response([
-                    'binary' => $binary
+                    'binary' => $binary,
+                    'status' => \App\Http\Enum\UserStatusEnum::STATUS,
+                    'genealogy_resume' => \App\GenealogyResume::find($id),
+                    'side' => \App\Http\Enum\BinarySideEnum::SIDE
                 ]);
             }
             
@@ -60,6 +63,10 @@ class DotsBinaryController extends Controller {
                 'error' => $exc->getMessage()
             ]);
         }
+    }
+    
+    public function resume(){
+        
     }
 
     /**

@@ -82,6 +82,14 @@ class GenealogyController extends Controller {
         return Genealogy::where('indicator', '=', $id)->with(['user', 'leaf0', 'leaf1'])->get();
     }
 
+    public function family($id = null) {
+        $id = (is_null($id)) ? Auth::user()->id : $id;
+        return response([
+            'children' => Genealogy::with('children')->find($id),
+            'status' => UserStatusEnum::STATUS
+        ]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

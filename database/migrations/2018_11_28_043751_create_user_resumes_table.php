@@ -22,6 +22,7 @@ class CreateUserResumesTable extends Migration
             $table->decimal('debit_lidership', 12, 2)->default(0);
             $table->decimal('bonus_limits', 12, 2)->default(0);
             $table->decimal('amount_bonus', 12, 2)->default(0);
+            $table->decimal('withdraw', 12, 2)->default(0);
         });
     }
 

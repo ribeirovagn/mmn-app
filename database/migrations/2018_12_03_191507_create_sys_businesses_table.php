@@ -17,6 +17,8 @@ class CreateSysBusinessesTable extends Migration
             $table->increments('id');
             $table->boolean('binary')->default(true);
             $table->boolean('unilevel')->default(true);
+            $table->boolean('withdraw_is_active')->default(true);
+            $table->decimal('withdraw_tax', 8, 2)->default(0);
             $table->boolean('leadership_balance')->default(false);
             $table->timestamps();
         });

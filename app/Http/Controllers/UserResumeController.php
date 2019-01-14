@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\UserResume;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Transactions;
+use App\Http\Enum\TransactionsTypeEnum;
+use App\TransactionStatus;
+use Illuminate\Support\Facades\DB;
 
-class UserResumeController extends Controller
-{
+class UserResumeController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         //
     }
 
@@ -23,8 +26,7 @@ class UserResumeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -34,8 +36,7 @@ class UserResumeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //
     }
 
@@ -45,8 +46,7 @@ class UserResumeController extends Controller
      * @param  \App\UserResume  $userResume
      * @return \Illuminate\Http\Response
      */
-    public function show($id = null)
-    {
+    public function show($id = null) {
         $id = (is_null($id) ? Auth::user()->id : $id);
         return UserResume::find($id);
     }
@@ -57,8 +57,7 @@ class UserResumeController extends Controller
      * @param  \App\UserResume  $userResume
      * @return \Illuminate\Http\Response
      */
-    public function edit(UserResume $userResume)
-    {
+    public function edit(UserResume $userResume) {
         //
     }
 
@@ -69,8 +68,7 @@ class UserResumeController extends Controller
      * @param  \App\UserResume  $userResume
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UserResume $userResume)
-    {
+    public function update(Request $request, UserResume $userResume) {
         //
     }
 
@@ -80,8 +78,78 @@ class UserResumeController extends Controller
      * @param  \App\UserResume  $userResume
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserResume $userResume)
-    {
+    public function destroy(UserResume $userResume) {
         //
     }
+
+    public function withdraw(Request $request) {
+        try {
+            $this->validate($request, [
+                'amount' => 'required'
+            ]);
+
+            $sysBusiness = \App\SysBusiness::first();
+
+            if ($sysBusiness->withdraw_is_active === 0) {
+                throw new \Exception('Withdraw is not active!');
+            }
+
+            if ($request->amount <= 0) {
+                throw new \Exception('The value must be greater than 0!');
+            }
+
+            $totalWithdraw = ($request->amount + $sysBusiness->withdraw_tax);
+
+
+            DB::beginTransaction();
+            $userResume = $this->show();
+
+            if ($totalWithdraw >= $request->amount) {
+
+                $userResume->increment('withdraw', $totalWithdraw);
+                $userResume->decrement('amount', $totalWithdraw);
+
+                $transaction = Transactions::create([
+                            'user_id' => Auth::user()->id,
+                            'type' => TransactionsTypeEnum::WITHDRAW,
+                            'value' => $request->amount,
+                            'status' => \App\Http\Enum\TransactionsStatusEnum::COMPLETED
+                ]);
+
+                TransactionStatus::create([
+                    'transaction_id' => $transaction->id,
+                    'status' => $transaction->status
+                ]);
+
+
+                if ($sysBusiness->withdraw_tax > 0) {
+                    $withdraw_tax = Transactions::create([
+                                'user_id' => Auth::user()->id,
+                                'type' => TransactionsTypeEnum::WITHDRAW_TAX,
+                                'value' => $sysBusiness->withdraw_tax,
+                                'related' => $transaction->id,
+                                'status' => \App\Http\Enum\TransactionsStatusEnum::COMPLETED
+                    ]);
+
+                    TransactionStatus::create([
+                        'transaction_id' => $withdraw_tax->id,
+                        'status' => $withdraw_tax->status
+                    ]);
+                }
+
+                DB::commit();
+                return response($userResume, 200);
+            }
+
+            return response([
+                'message' => 'The amount lees than ' . $totalWithdraw
+                    ], 422);
+        } catch (\Exception $exc) {
+            DB::rollBack();
+            return response([
+                'message' => $exc->getMessage()
+                    ], 422);
+        }
+    }
+
 }
