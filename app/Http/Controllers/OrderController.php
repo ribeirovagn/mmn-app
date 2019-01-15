@@ -119,7 +119,10 @@ class OrderController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function showByUser() {
-        return Order::with(['statuses','items'])->where('user_id', Auth::user()->id)->get();
+        return Order::with(['statuses','items'])
+                ->join('sys_order_statuses', 'sys_order_statuses.id', 'orders.status')
+                ->select('sys_order_statuses.name', 'orders.*')
+                ->where('user_id', Auth::user()->id)->get();
     }
 
     /**
@@ -166,6 +169,13 @@ class OrderController extends Controller {
             if ($order->status === OrderStatusEnum::PAID) {
                 throw new \Exception("Order already paid!");
             }
+            
+            $userResume = \App\UserResume::find(Auth::user()->id);
+            
+            if($order->value_fiat > $userResume->amount){
+//                throw new \Exception("Insufficient funds!");
+            }
+            
 
             $levelcontroller = new LevelController();
             $productController = new ProductController();
@@ -195,7 +205,7 @@ class OrderController extends Controller {
             }
 
             $updated = $this->updateStatus($order, OrderStatusEnum::PAID);
-
+            $userResume->decrement('amount', $order->value_fiat);
             DB::commit();
             return response($updated, 200);
         } catch (\Exception $ex) {

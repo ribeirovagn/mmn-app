@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
+use App\Closure;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class ClosureController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::with('productType')->get();
+        //
     }
 
     /**
@@ -35,33 +35,27 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        try{
-            return Product::create($request->all());
-        } catch (\Exception $exc){
-            return response([
-                'error' => $exc->getMessage()
-            ], 422);
-        }
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  \App\Closure  $closure
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Closure $closure)
     {
-        return Product::with(['productType', 'levels'])->find($id);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  \App\Closure  $closure
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(Closure $closure)
     {
         //
     }
@@ -70,10 +64,10 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
+     * @param  \App\Closure  $closure
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Closure $closure)
     {
         //
     }
@@ -81,12 +75,11 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Product  $product
+     * @param  \App\Closure  $closure
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Closure $closure)
     {
         //
     }
-    
 }

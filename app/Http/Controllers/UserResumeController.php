@@ -82,6 +82,12 @@ class UserResumeController extends Controller {
         //
     }
 
+    /**
+     * 
+     * @param Request $request
+     * @return type
+     * @throws \Exception
+     */
     public function withdraw(Request $request) {
         try {
             $this->validate($request, [
@@ -100,11 +106,10 @@ class UserResumeController extends Controller {
 
             $totalWithdraw = ($request->amount + $sysBusiness->withdraw_tax);
 
-
             DB::beginTransaction();
             $userResume = $this->show();
 
-            if ($totalWithdraw >= $request->amount) {
+            if ($userResume->amount >= $totalWithdraw) {
 
                 $userResume->increment('withdraw', $totalWithdraw);
                 $userResume->decrement('amount', $totalWithdraw);
@@ -113,14 +118,13 @@ class UserResumeController extends Controller {
                             'user_id' => Auth::user()->id,
                             'type' => TransactionsTypeEnum::WITHDRAW,
                             'value' => $request->amount,
-                            'status' => \App\Http\Enum\TransactionsStatusEnum::COMPLETED
+                            'status' => \App\Http\Enum\TransactionsStatusEnum::PENDING
                 ]);
 
                 TransactionStatus::create([
                     'transaction_id' => $transaction->id,
                     'status' => $transaction->status
                 ]);
-
 
                 if ($sysBusiness->withdraw_tax > 0) {
                     $withdraw_tax = Transactions::create([
@@ -141,15 +145,30 @@ class UserResumeController extends Controller {
                 return response($userResume, 200);
             }
 
-            return response([
-                'message' => 'The amount lees than ' . $totalWithdraw
-                    ], 422);
+            throw new \Exception('The amount lees than ' . $totalWithdraw);
         } catch (\Exception $exc) {
             DB::rollBack();
             return response([
                 'message' => $exc->getMessage()
                     ], 422);
         }
+    }
+
+    /**
+     * 
+     */
+    public function withdrawByStatus() {
+        $statuses = \App\Http\Enum\TransactionsStatusEnum::STATUS;
+        $transaction = [];
+        foreach ($statuses as $key => $value) {
+            $transaction[$value] = Transactions::with(['statuses', 'user'])
+                    ->where('status', $key)
+                    ->whereIn('type', [TransactionsTypeEnum::WITHDRAW])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+        }
+
+        return response($transaction, 200);
     }
 
 }

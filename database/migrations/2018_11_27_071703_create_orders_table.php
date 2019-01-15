@@ -23,6 +23,7 @@ class CreateOrdersTable extends Migration
             $table->tinyInteger('status')->default(1);
             $table->string('txid')->nullable();
             $table->datetime('payday')->nullable();
+            $table->tinyInteger('payment_type')->nullable();
             $table->timestamps();
         });
     }

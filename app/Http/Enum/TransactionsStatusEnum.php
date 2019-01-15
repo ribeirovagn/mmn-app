@@ -18,11 +18,13 @@ abstract class TransactionsStatusEnum {
     const COMPLETED = 2;
     const SUCCESS = 3;
     const CANCELED = 4;
+    const REVERSAL = 5;
     
     const STATUS = [
         self::PENDING => 'PENDING',
         self::COMPLETED => 'COMPLETED',
         self::SUCCESS => 'SUCCESS',
         self::CANCELED => 'CANCELED',
+        self::REVERSAL => 'REVERSAL',
     ];
 }

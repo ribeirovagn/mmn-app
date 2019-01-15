@@ -32,10 +32,20 @@ Route::group(['middleware' => ['admin', 'auth:api']], function() {
     });
 
     Route::group([
+        'prefix' => 'financial'
+            ], function () {
+        Route::get('/withdraw', 'UserResumeController@withdrawByStatus');
+        Route::get('/withdraw/show/{id}', 'TransactionsController@showWithdraw');
+        Route::put('/withdraw/update/{id}', 'TransactionsController@updateWithdraw');
+    });
+
+    Route::group([
         'prefix' => 'products'
             ], function () {
         Route::get('/details/{id}', 'ProductController@show');
+        Route::get('/type', 'ProductTypeController@index');
         Route::get('/', 'ProductController@index');
+        Route::post('/', 'ProductController@store');
     });
 
     Route::group([

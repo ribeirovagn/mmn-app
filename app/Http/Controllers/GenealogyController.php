@@ -68,7 +68,7 @@ class GenealogyController extends Controller {
      */
     public function show($id = null) {
         $id = is_null($id) ? Auth::user()->id : $id;
-        return User::with(['genealogies', 'genealogy_statuses', 'genealogy_resume'])->find($id);
+        return User::with(['genealogies', 'genealogy_statuses', 'genealogy_resume', 'graduations'])->find($id);
     }
 
     /**

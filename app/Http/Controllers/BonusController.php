@@ -87,7 +87,7 @@ class BonusController extends Controller {
         }
     }
 
-    public static function unilevel($level, $indicator, $item) {
+    public static function  unilevel($level, $indicator, $item) {
         
         try {
             if ($level->amount > 0) {
@@ -114,7 +114,9 @@ class BonusController extends Controller {
             throw \Exception('Bonus Unilevel Exception');
         }        
         
-        DotsUnilevelController::show($level, $indicator, $item);
+        $DotsUnilevelController = new DotsUnilevelController();
+        
+        $DotsUnilevelController->show($level, $indicator, $item);
         
     }
 

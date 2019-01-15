@@ -6,6 +6,7 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable {
 
@@ -54,6 +55,12 @@ class User extends Authenticatable {
      */
     public function genealogy_statuses() {
         return $this->hasMany('App\GenealogyStatus');
+    }
+    
+    public function graduations(){
+        return $this->hasMany('App\GraduationsHist')
+                ->join('graduations', 'graduations.id', 'graduations_hists.graduation_id')
+                ->orderBy('ordinal', 'desc');
     }
 
 }

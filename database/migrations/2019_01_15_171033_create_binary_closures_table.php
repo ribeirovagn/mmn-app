@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTransactionStatusesTable extends Migration
+class CreateBinaryClosuresTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateTransactionStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('transaction_statuses', function (Blueprint $table) {
+        Schema::create('binary_closures', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('transaction_id')->unsigned();
-            $table->foreign('transaction_id')->references('id')->on('transactions');
-            $table->tinyInteger('status');
-            $table->text('note')->nullable();
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ class CreateTransactionStatusesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaction_statuses');
+        Schema::dropIfExists('binary_closures');
     }
 }

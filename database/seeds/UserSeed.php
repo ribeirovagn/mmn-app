@@ -36,7 +36,8 @@ class UserSeed extends Seeder {
         ]);
 
         UserResume::create([
-            'user_id' => env('USER_INDICATOR')
+            'user_id' => env('USER_INDICATOR'),
+            'amount' => 500
         ]);
 
         Genealogy::create([

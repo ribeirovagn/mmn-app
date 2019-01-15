@@ -7,15 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Enum\TransactionsTypeEnum;
 
-class TransactionsController extends Controller
-{
+class TransactionsController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         return Transactions::with(['statuses'])->all();
     }
 
@@ -24,8 +23,7 @@ class TransactionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -35,8 +33,7 @@ class TransactionsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //
     }
 
@@ -46,10 +43,9 @@ class TransactionsController extends Controller
      * @param  \App\Transactions  $transactions
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         return Transactions::with(['statuses'])->where('user_id', '=', Auth::user()->id);
-   }
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -57,8 +53,7 @@ class TransactionsController extends Controller
      * @param  \App\Transactions  $transactions
      * @return \Illuminate\Http\Response
      */
-    public function edit(Transactions $transactions)
-    {
+    public function edit(Transactions $transactions) {
         //
     }
 
@@ -69,8 +64,7 @@ class TransactionsController extends Controller
      * @param  \App\Transactions  $transactions
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Transactions $transactions)
-    {
+    public function update(Request $request, Transactions $transactions) {
         //
     }
 
@@ -80,17 +74,64 @@ class TransactionsController extends Controller
      * @param  \App\Transactions  $transactions
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Transactions $transactions)
-    {
+    public function destroy(Transactions $transactions) {
         //
     }
-    
-    
-    public function listWithdraw(){
-        return Transactions::with('statuses')
-                ->where('user_id', Auth::user()->id)
-                ->where('type', TransactionsTypeEnum::WITHDRAW)
+
+    public function listWithdraw($id = null) {
+
+        $userID = is_null($id) ? Auth::user()->id : $id;
+
+        $Transactions = Transactions::with('statuses')
+                ->where('user_id', $userID)
+                ->whereIn('type', [TransactionsTypeEnum::WITHDRAW, TransactionsTypeEnum::WITHDRAW_TAX])
                 ->orderBy('created_at', 'desc')
                 ->get();
+        return response([
+            'transactions' => $Transactions,
+            'types' => TransactionsTypeEnum::TYPE,
+            'resume' => \App\UserResume::find($userID),
+            'statuses' => \App\Http\Enum\TransactionsStatusEnum::STATUS
+        ]);
     }
+
+    public function showWithdraw($id) {
+
+        $Transactions = Transactions::with(['statuses', 'related', 'user'])
+                ->where('id', $id)
+                ->where('type', TransactionsTypeEnum::WITHDRAW)
+                ->first();
+        return response([
+            'transaction' => $Transactions,
+            'resume' => \App\UserResume::find($Transactions->user_id),
+            'statuses' => \App\Http\Enum\TransactionsStatusEnum::STATUS
+        ]);
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param int $id
+     * @return type
+     */
+    public function updateWithdraw(Request $request, $id) {
+        try {
+            $transaction = Transactions::find($id);
+
+            $transaction->update([
+                'status' => $request->status
+            ]);
+
+            \App\TransactionStatus::create([
+                'transaction_id' => $transaction->id,
+                'status' => $transaction->status,
+                'note' => $request->note
+            ]);
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+                    ], 422);
+        }
+    }
+
 }

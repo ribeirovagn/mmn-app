@@ -27,6 +27,10 @@ class SysTransactionsStatusSeeder extends Seeder {
         SysTransactionsStatus::create([
             'name' => TransactionsStatusEnum::STATUS[TransactionsStatusEnum::CANCELED]
         ]);
+
+        SysTransactionsStatus::create([
+            'name' => TransactionsStatusEnum::STATUS[TransactionsStatusEnum::REVERSAL]
+        ]);
     }
 
 }
