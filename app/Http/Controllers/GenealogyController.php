@@ -55,8 +55,12 @@ class GenealogyController extends Controller {
             GenealogyResume::create([
                 'user_id' => $userCreate->id
             ]);
+            
+            $GenealogyResume = GenealogyResume::find($request->indicator);
+            $GenealogyResume->increment('indicated', 1);
+            
         } catch (\Exception $ex) {
-            throw new \Exception($ex->getTrace());
+            throw new \Exception($ex->getMessage());
         }
     }
 
@@ -68,7 +72,12 @@ class GenealogyController extends Controller {
      */
     public function show($id = null) {
         $id = is_null($id) ? Auth::user()->id : $id;
-        return User::with(['genealogies', 'genealogy_statuses', 'genealogy_resume', 'graduations'])->find($id);
+        return User::with([
+                    'genealogies',
+                    'genealogy_statuses',
+                    'genealogy_resume',
+                    'graduations',
+                ])->find($id);
     }
 
     /**
@@ -82,6 +91,7 @@ class GenealogyController extends Controller {
         return Genealogy::where('indicator', '=', $id)->with(['user', 'leaf0', 'leaf1'])->get();
     }
 
+    
     public function family($id = null) {
         $id = (is_null($id)) ? Auth::user()->id : $id;
         return response([

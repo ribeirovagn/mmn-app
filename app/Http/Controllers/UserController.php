@@ -47,6 +47,10 @@ class UserController extends Controller {
         ]);
 
         DB::beginTransaction();
+        
+        
+        User::findOrFail($request->indicator);
+        
         try {
 
             $userCreate = User::create([

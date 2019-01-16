@@ -38,7 +38,18 @@ class User extends Authenticatable {
      * @return App\Genealogy
      */
     public function genealogies() {
-        return $this->hasOne('App\Genealogy');
+        return $this->hasOne('App\Genealogy')
+                ->join('sys_user_statuses', 'sys_user_statuses.id', 'genealogies.status')
+                ->select('sys_user_statuses.name', 'genealogies.*')
+                ->with('sponsor');
+    }
+    
+    /**
+     * 
+     * @return type
+     */
+    public function indicator(){
+        return $this->hasOne('App\User');
     }
 
     /**
@@ -46,7 +57,9 @@ class User extends Authenticatable {
      * @return App\GenealogyResume
      */
     public function genealogy_resume() {
-        return $this->hasOne('App\GenealogyResume');
+        return $this->hasOne('App\GenealogyResume')
+                ->join('graduations', 'graduations.id', 'graduations_id', 'indicated')
+                ->select('graduations.name', 'genealogy_resumes.*');
     }
 
     /**
@@ -54,7 +67,8 @@ class User extends Authenticatable {
      * @return App\GenealogyStatus
      */
     public function genealogy_statuses() {
-        return $this->hasMany('App\GenealogyStatus');
+        return $this->hasMany('App\GenealogyStatus')
+                ->join('sys_user_statuses', 'sys_user_statuses.id', 'genealogy_statuses.status');
     }
     
     public function graduations(){

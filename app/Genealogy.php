@@ -29,6 +29,10 @@ class Genealogy extends Model {
     public function user() {
         return $this->belongsTo('App\User');
     }
+    
+    public function sponsor(){
+        return $this->hasOne('App\User', 'id', 'indicator');
+    }
 
     /**
      * 
@@ -89,6 +93,11 @@ class Genealogy extends Model {
         return DB::select(DB::raw($query));
     }
 
+    /**
+     * 
+     * @param type $node
+     * @return type
+     */
     public static function indicatorsAsc($node) {
         $query = "SELECT 
                     child, parent, lvl AS level, status
@@ -111,6 +120,11 @@ class Genealogy extends Model {
         return DB::select(DB::raw($query));
     }
 
+    /**
+     * 
+     * @param type $node
+     * @return type
+     */
     public static function nodesAsc($node) {
         $query = "SELECT 
                     child, parent, lvl AS level, status, side

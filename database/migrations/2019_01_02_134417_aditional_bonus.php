@@ -16,6 +16,7 @@ class AditionalBonus extends Migration
         Schema::create('aditional_bonuses', function (Blueprint $table) {
             $table->increments('id');
             $table->string('interval');
+            $table->integer('product_id')->unsigned();
             $table->decimal('percentage', 5,2);
         });
     }

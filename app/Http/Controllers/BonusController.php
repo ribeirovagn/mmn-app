@@ -45,7 +45,7 @@ class BonusController extends Controller {
             if ($level->amount > 0) {
 
                 $transaction = Transactions::create([
-                            'user_id' => $indicator->child,
+                            'user_id' => $indicator->parent,
                             'type' => TransactionsTypeEnum::BONUS,
                             'order_item_id' => $item->id,
                             'references_id' => $level->bonus->id,
@@ -69,7 +69,7 @@ class BonusController extends Controller {
         if ($level->dots_binary > 0) {
             try {
                 $DotsBinary = DotsBinary::create([
-                            'user_id' => $indicator->child,
+                            'user_id' => $indicator->parent,
                             'status' => $indicator->status,
                             'description' => '',
                             'order_item_id' => $item->id,
@@ -128,7 +128,7 @@ class BonusController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        return Bouns::find($id);
+        return Bonus::find($id);
     }
 
     /**
