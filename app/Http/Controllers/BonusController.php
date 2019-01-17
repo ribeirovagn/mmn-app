@@ -53,13 +53,15 @@ class BonusController extends Controller {
                             'order_item_id' => $item->id,
                             'references_id' => $level->bonus->id,
                             'value' => $level->amount,
-                            'status' => $indicator->status,
-                            'level' => $indicator->level
+                            'status' => TransactionsStatusEnum::SUCCESS,
+                            'level' => $indicator->level,
+                            'description' => 'BINARY BONUS ' . $level->bonus->name,
+                            'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::CREDIT
                 ]);
 
                 TransactionStatus::create([
                     'transaction_id' => $transaction->id,
-                    'status' => TransactionsStatusEnum::SUCCESS
+                    'status' => $transaction->status
                 ]);
 
                 $userResume = UserResume::find($transaction->user_id);
@@ -78,8 +80,8 @@ class BonusController extends Controller {
                 $DotsBinary = DotsBinary::create([
                             'user_id' => $indicator->child,
                             'status' => $indicator->status,
-                            'description' => '',
                             'order_item_id' => $item->id,
+                            'references_id' => $level->bonus->id,
                             'dots' => $level->dots,
                             'side' => $genealogy->side,
                             'level' => $indicator->level,
@@ -113,13 +115,15 @@ class BonusController extends Controller {
             if ($level->amount > 0) {
 
                 $transaction = Transactions::create([
-                            'user_id' => $indicator->parent,
+                            'user_id' => $indicator->child,
                             'type' => TransactionsTypeEnum::BONUS,
                             'order_item_id' => $item->id,
                             'references_id' => $level->bonus->id,
                             'value' => $level->amount,
                             'status' => $indicator->status,
                             'level' => $indicator->level,
+                            'description' => 'UNILEVEL BONUS ' . $level->bonus->name,
+                            'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::CREDIT
                 ]);
 
                 TransactionStatus::create([

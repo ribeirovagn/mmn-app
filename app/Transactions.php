@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transactions extends Model
 {
-    protected $fillable = ['user_id', 'references_id', 'value', 'status', 'type', 'level', 'related', 'description', 'note'];
+    protected $fillable = ['user_id', 'references_id', 'value', 'status', 'type', 'level', 'related', 'description', 'note', 'operation'];
     
     public function statuses(){
         return $this->hasMany('App\TransactionStatus', 'transaction_id')
@@ -20,5 +20,13 @@ class Transactions extends Model
     
     public function related(){
         return $this->hasOne('App\Transactions', 'related');
+    }
+    
+    public function type(){
+        return $this->hasOne('App\SysTransactionsType', 'id', 'type');
+    }
+    
+    public function operation(){
+        return $this->hasOne('App\SysTransactionOperationType','id', 'operation');
     }
 }

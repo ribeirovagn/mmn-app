@@ -117,8 +117,10 @@ class UserResumeController extends Controller {
                 $transaction = Transactions::create([
                             'user_id' => Auth::user()->id,
                             'type' => TransactionsTypeEnum::WITHDRAW,
+                            'description' => TransactionsTypeEnum::TYPE[TransactionsTypeEnum::WITHDRAW],
                             'value' => $request->amount,
-                            'status' => \App\Http\Enum\TransactionsStatusEnum::PENDING
+                            'status' => \App\Http\Enum\TransactionsStatusEnum::PENDING,
+                            'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::DEBIT
                 ]);
 
                 TransactionStatus::create([
@@ -130,9 +132,11 @@ class UserResumeController extends Controller {
                     $withdraw_tax = Transactions::create([
                                 'user_id' => Auth::user()->id,
                                 'type' => TransactionsTypeEnum::WITHDRAW_TAX,
+                                'description' => TransactionsTypeEnum::TYPE[TransactionsTypeEnum::WITHDRAW_TAX],
                                 'value' => $sysBusiness->withdraw_tax,
                                 'related' => $transaction->id,
-                                'status' => \App\Http\Enum\TransactionsStatusEnum::COMPLETED
+                                'status' => \App\Http\Enum\TransactionsStatusEnum::COMPLETED,
+                                'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::DEBIT
                     ]);
 
                     TransactionStatus::create([

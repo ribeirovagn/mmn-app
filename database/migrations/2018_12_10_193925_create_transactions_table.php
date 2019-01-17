@@ -26,6 +26,7 @@ class CreateTransactionsTable extends Migration
             $table->tinyInteger('status');
             $table->integer('level')->nullable();
             $table->integer('related')->nullable();
+            $table->tinyInteger('operation');
             $table->timestamps();
         });
     }

@@ -20,6 +20,7 @@ abstract class TransactionsTypeEnum {
     const WITHDRAW_TAX = 3;
     const REVERSAL = 4;
     const PAYMENT = 5;
+    const BINARY_CLOSURE = 6;
     
     const TYPE = [
         self::BONUS => 'BONUS',
@@ -27,5 +28,6 @@ abstract class TransactionsTypeEnum {
         self::WITHDRAW_TAX => 'WITHDRAW TAX',
         self::REVERSAL => 'REVERSAL',
         self::PAYMENT => 'PAYMENT',
+        self::BINARY_CLOSURE => 'BINARY CLOSURE',
     ];
 }

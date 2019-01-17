@@ -22,5 +22,7 @@ class DatabaseSeeder extends Seeder
          $this->call(SysTransactionsStatusSeeder::class);
          $this->call(SysOrderStatusTable::class);
          $this->call(SysPaymentTypeTable::class);
+         $this->call(SysBinaryTypeTable::class);
+         $this->call(SysTransactionOperationTypeTable::class);
     }
 }

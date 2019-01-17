@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Transactions;
+use App\TransactionStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Enum\TransactionsTypeEnum;
+use App\Http\Enum\TransactionsStatusEnum;
+use App\UserResume;
 
 class TransactionsController extends Controller {
 
@@ -43,8 +46,9 @@ class TransactionsController extends Controller {
      * @param  \App\Transactions  $transactions
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
-        return Transactions::with(['statuses'])->where('user_id', '=', Auth::user()->id);
+    public function show($id = null) {
+        $id = (is_null($id)) ? Auth::user()->id : $id;
+        return Transactions::with(['statuses', 'type', 'operation'])->where('user_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->get();
     }
 
     /**
@@ -131,6 +135,38 @@ class TransactionsController extends Controller {
             return response([
                 'error' => $exc->getMessage()
                     ], 422);
+        }
+    }
+    
+
+    /**
+     * 
+     * @param type $transaction
+     * @return type
+     */
+    public static function paymentOrder($transaction) {
+        try {
+            $_transaction = Transactions::create([
+                        'user_id' => $transaction->user_id,
+                        'type' => \App\Http\Enum\TransactionsTypeEnum::PAYMENT,
+                        'order_item_id' => $transaction->order_item_id,
+                        'references_id' => $transaction->id,
+                        'value' => $transaction->value_fiat,
+                        'status' => TransactionsStatusEnum::SUCCESS,
+                        'level' => 0,
+                        'description' => 'ORDER #' . $transaction->id,
+                        'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::DEBIT
+            ]);
+
+            TransactionStatus::create([
+                'transaction_id' => $_transaction->id,
+                'status' => $_transaction->status
+            ]);
+
+            $userResume = UserResume::find($_transaction->user_id);
+            $userResume->decrement('amount', $_transaction->value);
+        } catch (\Exception $exc) {
+            return $exc->getMessage();
         }
     }
 

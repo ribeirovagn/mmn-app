@@ -50,24 +50,26 @@ class BinaryClosureController extends Controller {
                 $DotsUnilevelController = new DotsUnilevelController();
                 foreach ($dotsBinary as $dot) {
                     if ($dot->dots_binary_1 !== $dot->dots_binary_0) {
+                        
+                        $lessLeg = ($dot->dots_binary_1 < $dot->dots_binary_0) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT;
+                        $dotsLess = 'dots_binary_' . $lessLeg;
+                        
                         $closure = Closure::create([
                                     'binary_closure_id' => $binaryClosure->id,
                                     'user_id' => $dot->user_id,
                                     'dots_binary_0' => $dot->dots_binary_0,
                                     'dots_binary_1' => $dot->dots_binary_1,
+                                    'less_leg' => $dot->{$dotsLess},
                                     'dots_unilevel' => $dot->dots_unilevel,
                                     'graduation_id' => $dot->graduations_id,
                                     'status' => $dot->genealogy->status,
                                     'binary_percentage' => $dot->binary_percentage
                         ]);
 
-                        $lessLeg = ($closure->dots_binary_1 < $closure->dots_binary_0) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT;
-                        $dotsLess = 'dots_binary_' . $lessLeg;
 
                         $genealogyResume = \App\GenealogyResume::find($closure->user_id);
-
-                        $genealogyResume->decrement('dots_binary_0', $closure->{$dotsLess});
-                        $genealogyResume->decrement('dots_binary_1', $closure->{$dotsLess});
+                        $genealogyResume->decrement('dots_binary_0', $closure->less_leg);
+                        $genealogyResume->decrement('dots_binary_1', $closure->less_leg);
 
                         $dotsUnilevel = \App\DotsUnilevel::create([
                             'user_id' => $genealogyResume->user_id,

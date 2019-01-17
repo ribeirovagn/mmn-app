@@ -20,6 +20,7 @@ class CreateClosuresTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('dots_binary_0')->default(0);
             $table->integer('dots_binary_1')->default(0);
+            $table->integer('less_leg')->default(0);
             $table->integer('dots_unilevel')->default(0);
             $table->integer('graduation_id')->default(0);
             $table->tinyInteger('status')->default(0);

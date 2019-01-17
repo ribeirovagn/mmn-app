@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
   |
  */
 
+Route::get('/binarytype/{id}', 'ClosureController@store');
+
 Route::resource('user', 'UserController')->except([
     'create', 'destroy'
 ]);
@@ -56,6 +58,8 @@ Route::group([
     'middleware' => 'auth:api'
         ], function() {
     Route::get('/withdraw', 'TransactionsController@listWithdraw')->name('financial.listWithdraw');
+    Route::get('/transactions/{id}', 'TransactionsController@show')->name('financial.transactions.id');
+    Route::get('/transactions', 'TransactionsController@show')->name('financial.transactions');
     Route::post('/withdraw', 'UserResumeController@withdraw')->name('financial.withdraw');
 });
 

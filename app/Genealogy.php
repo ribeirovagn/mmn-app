@@ -59,7 +59,11 @@ class Genealogy extends Model {
     }
 
     public function children() {
-        return $this->hasMany('App\Genealogy', 'indicator');
+        return $this->hasMany('App\Genealogy', 'indicator')->with(['user', 'status']);
+    }
+    
+    public function status(){
+        return $this->hasOne('App\SysUserStatus', 'id', 'status');
     }
 
     /**

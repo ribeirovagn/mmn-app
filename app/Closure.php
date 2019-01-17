@@ -14,7 +14,8 @@ class Closure extends Model
         'dots_unilevel',
         'graduation_id',
         'status',
-        'binary_percentage'
+        'binary_percentage',
+        'less_leg'
     ];
     
     

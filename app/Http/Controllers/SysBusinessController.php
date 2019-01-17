@@ -42,7 +42,7 @@ class SysBusinessController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public static function show() {
-        return SysBusiness::first();
+        return SysBusiness::with('binarytype')->first();
     }
 
     /**

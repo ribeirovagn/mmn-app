@@ -94,10 +94,7 @@ class GenealogyController extends Controller {
     
     public function family($id = null) {
         $id = (is_null($id)) ? Auth::user()->id : $id;
-        return response([
-            'children' => Genealogy::with('children')->find($id),
-            'status' => UserStatusEnum::STATUS
-        ]);
+        return response(Genealogy::with(['children', 'user', 'status'])->find($id));
     }
 
     /**

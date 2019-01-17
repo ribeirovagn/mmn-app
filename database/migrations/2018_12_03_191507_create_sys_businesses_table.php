@@ -20,6 +20,7 @@ class CreateSysBusinessesTable extends Migration
             $table->boolean('withdraw_is_active')->default(true);
             $table->decimal('withdraw_tax', 8, 2)->default(0);
             $table->boolean('leadership_balance')->default(false);
+            $table->integer('sys_binary_type_id')->nullable();
             $table->timestamps();
         });
     }
