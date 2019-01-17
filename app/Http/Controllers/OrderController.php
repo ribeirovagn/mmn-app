@@ -104,14 +104,13 @@ class OrderController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id = null) {
-        $id = (is_null($id)) ? Auth::user()->id : $id;
         return Order::with([
                     'statuses',
                     'items'
                 ])->find($id);
-    }    
-    
-    
+    }
+
+
     /**
      * Display the specified resource.
      *
@@ -158,7 +157,7 @@ class OrderController extends Controller {
 
     /**
      * Pagamento de pedidos
-     * 
+     *
      * @param int $id
      */
     public function pay($id) {
@@ -169,17 +168,17 @@ class OrderController extends Controller {
             if ($order->status === OrderStatusEnum::PAID) {
                 throw new \Exception("Order already paid!");
             }
-            
+
             $userResume = \App\UserResume::find(Auth::user()->id);
-            
+
             if($order->value_fiat > $userResume->amount){
 //                throw new \Exception("Insufficient funds!");
             }
-            
+
 
             $levelcontroller = new LevelController();
             $productController = new ProductController();
-            
+
             foreach ($order->items as $item) {
 
                 $product = $productController->show($item->product_id);
@@ -187,14 +186,14 @@ class OrderController extends Controller {
                 if ($product->productType->is_active === 1) {
                     switch ($product->productType->name) {
                         case "Activation":
-                            $this->payActivation($order);
+                            $this->payActivation($order, $item);
                             $this->payUnilevel($order, $item);
                             $this->payBinary($order, $item);
                             break;
 
                         case "Multilevel":
+                            $updated = $this->payBinary($order, $item);
                             $this->payUnilevel($order, $item);
-                            $this->payBinary($order, $item);
                             break;
 
                         case "Voucher":
@@ -207,7 +206,10 @@ class OrderController extends Controller {
             $updated = $this->updateStatus($order, OrderStatusEnum::PAID);
             $userResume->decrement('amount', $order->value_fiat);
             DB::commit();
-            return response($updated, 200);
+            return response([
+                'message' => 'OK',
+                'updated' => $updated
+            ], 200);
         } catch (\Exception $ex) {
             DB::rollBack();
             return response([
@@ -217,7 +219,7 @@ class OrderController extends Controller {
     }
 
     /**
-     * 
+     *
      * @param type $order
      * @param type $status
      * @return type
@@ -228,6 +230,7 @@ class OrderController extends Controller {
 
             $order->update([
                 'status' => $status,
+                'payment_type' => \App\Http\Enum\SysPaymentTypeEnum::WITHDRAW,
                 'payday' => ($status === OrderStatusEnum::PAID) ? Carbon::now() : null
             ]);
 
@@ -240,27 +243,34 @@ class OrderController extends Controller {
     }
 
     /**
-     * 
+     *
      * @param App\Order $order
      * @throws \Exception
      */
-    protected function payActivation($order) {
+    protected function payActivation($order, $item) {
         try {
             $GenealogyController = new GenealogyController();
             $SysBusinessController = SysBusinessController::show();
 
             $Genealogy = $GenealogyController->updateStatus($order->user_id, UserStatusEnum::ACTIVE);
+            $genealogyResumes = \App\GenealogyResume::find($order->user_id);
+
+            $genealogyResumes->update([
+                'product_plan_id' => $item->product->id,
+                'binary_percentage' => $item->product->binary_percentage,
+            ]);
 
             if ($SysBusinessController->binary === 1) {
                 $GenealogyController->binaryPositioning($order->user_id);
             }
+
         } catch (\Exception $ex) {
             throw new \Exception('Activation ' . $ex->getMessage());
         }
     }
 
     /**
-     * 
+     *
      * @param App\Order $order
      * @param type $item
      * @return type
@@ -269,9 +279,9 @@ class OrderController extends Controller {
     protected function payUnilevel($order, $item) {
         try {
             $levelController = new LevelController();
-            $levels = $levelController->show($item->product_id);
+            $levels = $levelController->show($item->product_id, \App\Http\Enum\LevelTypeEnum::UNILEVEL);
 
-            $indicators = GenealogyController::indicatorsAsc($order->salesman);
+            $indicators = GenealogyController::indicatorsAsc($order->user_id);
             if (count($indicators) > 0) {
                 foreach ($indicators as $indicator) {
                     $level = LevelController::betweenNormalize($levels, (int) $indicator->level);
@@ -280,15 +290,15 @@ class OrderController extends Controller {
                     }
                 }
             }
-   
-            
+
+
         } catch (\Exception $exc) {
             throw new \Exception('Multilevel ' . $exc->getMessage());
         }
     }
 
     /**
-     * 
+     *
      * @param App\Order $order
      * @param type $item
      * @return type
@@ -296,18 +306,22 @@ class OrderController extends Controller {
      */
     protected function payBinary($order, $item) {
         try {
-            $levelController = new LevelController();
-            $levels = $levelController->show($item->product_id);
             
-            $nodes = GenealogyController::nodesAsc($order->salesman);
+            $bonus = [];
+            $levelController = new LevelController();
+            $levels = $levelController->show($item->product_id, \App\Http\Enum\LevelTypeEnum::BINARY);
+
+            $nodes = GenealogyController::nodesAsc($order->user_id);
             if (count($nodes) > 0) {
                 foreach ($nodes as $node) {
                     $level = LevelController::betweenNormalize($levels, (int) $node->level);
                     if ($level) {
-                        return BonusController::binary($level, $node, $item);
+                        $bonus[] = BonusController::binary($level, $node, $item);
                     }
                 }
             }
+
+            return $bonus;
             
         } catch (\Exception $exc) {
             throw new \Exception('Multilevel ' . $exc->getMessage());
@@ -315,13 +329,13 @@ class OrderController extends Controller {
     }
 
     /**
-     * 
+     *
      * @param App\Order $order
      * @throws \Exception
      */
     protected function payVoucher($order) {
         try {
-            
+
         } catch (Exception $exc) {
             throw new \Exception('Voucher ' . $exc->getMessage());
         }

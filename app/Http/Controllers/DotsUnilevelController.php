@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\DotsUnilevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\GenealogyResume;
+use App\Http\Enum\TypeDotsUnilevel;
 
-class DotsUnilevelController extends Controller
-{
+class DotsUnilevelController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         //
     }
 
@@ -23,22 +24,27 @@ class DotsUnilevelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($level, $indicator, $item)
-    {
-        if ($level->dots_unilevel > 0) {
+    public function create($level, $indicator, $item) {
+        if ((int) $level->dots > 0 && (int) $level->is_active === 1) {
             $dotsUnilevel = DotsUnilevel::create([
                         'user_id' => $indicator->parent,
-                        'dots' => $level->dots_unilevel,
+                        'dots' => $level->dots,
                         'status' => $indicator->status,
-                        'type' => 1,
+                        'type' => TypeDotsUnilevel::BONUS,
                         'level' => $indicator->level,
                         'references_id' => $item->id,
-                        'description' => ''
+                        'description' => $level->bonus->name
             ]);
-
-            $genealogyResume = GenealogyResume::find($dotsUnilevel->user_id);
-            $genealogyResume->increment('dots_unilevel', $dotsUnilevel->dots);
+            $this->sumNewDots($dotsUnilevel);
         }
+        
+    }
+
+    public function sumNewDots($dotsUnilevel) {
+        $genealogyResume = GenealogyResume::find($dotsUnilevel->user_id);
+        $genealogyResume->increment('dots_unilevel', $dotsUnilevel->dots);
+        $graduationController = new GraduationController();
+        $graduationController->create($dotsUnilevel->user_id);
     }
 
     /**
@@ -47,8 +53,7 @@ class DotsUnilevelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //
     }
 
@@ -58,11 +63,11 @@ class DotsUnilevelController extends Controller
      * @param  \App\DotsUnilevel  $dotsUnilevel
      * @return \Illuminate\Http\Response
      */
-   public function show($id = null) {
+    public function show($id = null) {
         try {
             $id = is_null($id) ? Auth::user()->id : $id;
             $sysBusiness = \App\SysBusiness::first();
-            if ((int)$sysBusiness->unilevel === 1) {
+            if ((int) $sysBusiness->unilevel === 1) {
                 $binary = DotsUnilevel::where('user_id', '=', $id)->get();
                 return response([
                     'unilevel' => $binary,
@@ -70,9 +75,8 @@ class DotsUnilevelController extends Controller
                     'status' => \App\Http\Enum\UserStatusEnum::STATUS,
                 ]);
             }
-            
+
             throw new \Exception('Unilevel is not active');
-        
         } catch (\Exception $exc) {
             return response([
                 'error' => $exc->getMessage()
@@ -86,8 +90,7 @@ class DotsUnilevelController extends Controller
      * @param  \App\DotsUnilevel  $dotsUnilevel
      * @return \Illuminate\Http\Response
      */
-    public function edit(DotsUnilevel $dotsUnilevel)
-    {
+    public function edit(DotsUnilevel $dotsUnilevel) {
         //
     }
 
@@ -98,8 +101,7 @@ class DotsUnilevelController extends Controller
      * @param  \App\DotsUnilevel  $dotsUnilevel
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DotsUnilevel $dotsUnilevel)
-    {
+    public function update(Request $request, DotsUnilevel $dotsUnilevel) {
         //
     }
 
@@ -109,8 +111,8 @@ class DotsUnilevelController extends Controller
      * @param  \App\DotsUnilevel  $dotsUnilevel
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DotsUnilevel $dotsUnilevel)
-    {
+    public function destroy(DotsUnilevel $dotsUnilevel) {
         //
     }
+
 }

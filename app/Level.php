@@ -11,8 +11,8 @@ class Level extends Model
         'end',
         'bonus_id',
         'product_id',
-        'dots_binary',
-        'dots_unilevel',
+        'type',
+        'dots',
         'amount',
         'is_active'
     ];

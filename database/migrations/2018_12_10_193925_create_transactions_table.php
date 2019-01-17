@@ -17,6 +17,8 @@ class CreateTransactionsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->string('description')->nullable();
+            $table->string('note')->nullable();
             $table->tinyInteger('type');
             $table->integer('references_id')->nullable();
             $table->integer('order_item_id')->nullable();

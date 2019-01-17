@@ -22,7 +22,8 @@ class CreateClosuresTable extends Migration
             $table->integer('dots_binary_1')->default(0);
             $table->integer('dots_unilevel')->default(0);
             $table->integer('graduation_id')->default(0);
-            $table->tinyInteger('status')->default(0);            
+            $table->tinyInteger('status')->default(0);
+            $table->decimal('binary_percentage', 4, 2);
             $table->timestamps();
         });
     }

@@ -13,6 +13,12 @@ class Closure extends Model
         'dots_binary_1',
         'dots_unilevel',
         'graduation_id',
-        'status'
+        'status',
+        'binary_percentage'
     ];
+    
+    
+    public function user(){
+        return $this->hasOne('App\User', 'id', 'user_id');
+    }
 }

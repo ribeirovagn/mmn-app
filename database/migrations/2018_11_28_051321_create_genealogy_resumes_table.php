@@ -17,7 +17,7 @@ class CreateGenealogyResumesTable extends Migration {
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('indicated')->default(0);
             $table->integer('product_plan_id')->default(0);
-            $table->decimal('binary_percentage', 4, 2)->default(0);
+            $table->decimal('binary_percentage', 4, 2)->default(50);
             $table->integer('graduations_id')->default(1);
             $table->integer('dots_unilevel')->default(0);
             $table->integer('dots_binary_0')->default(0);

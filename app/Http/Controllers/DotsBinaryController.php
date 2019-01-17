@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DotsBinary;
+use App\GenealogyResume;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -99,5 +100,16 @@ class DotsBinaryController extends Controller {
     public function destroy(DotsBinary $dotsBinary) {
         //
     }
-
+    
+    /**
+     * 
+     * @return type
+     */
+    public static function toClosure(){
+        return GenealogyResume::with('genealogy')
+                ->where('dots_binary_0', '>' , 0)
+                ->where('dots_binary_1', '>' , 0)
+                ->get();
+    }
+    
 }

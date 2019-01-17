@@ -19,6 +19,7 @@ class CreateProductsTable extends Migration {
             $table->string('name');
             $table->string('description');
             $table->decimal('value', 28, 18);
+            $table->decimal('binary_percentage', 4, 2)->default(50);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

@@ -52,8 +52,11 @@ class LevelController extends Controller {
      * @param  \App\Level  $level
      * @return \Illuminate\Http\Response
      */
-    public function show($product) {
-        return Level::with(['statuses', 'bonus'])->where('product_id', $product)->get();
+    public function show($product, $type) {
+        return Level::with(['statuses', 'bonus'])
+                ->where('product_id', $product)
+                ->where('type', $type)
+                ->get();
     }
 
     /**

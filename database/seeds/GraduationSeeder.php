@@ -16,47 +16,47 @@ class GraduationSeeder extends Seeder {
             'ordinal' => 1,
             'limit' => 99999,
             'dots_start' => 0,
-            'dots_end' => 499
+            'dots_end' => 49
         ]);
         
         Graduation::create([
             'name' => 'Silver',
             'ordinal' => 2,
             'limit' => 99999,
-            'dots_start' => 500,
-            'dots_end' => 999
+            'dots_start' => 50,
+            'dots_end' => 99
         ]);
         
         Graduation::create([
             'name' => 'Gold',
             'ordinal' => 3,
             'limit' => 99999,
-            'dots_start' => 1000,
-            'dots_end' => 1499
+            'dots_start' => 100,
+            'dots_end' => 149
         ]);
         
         Graduation::create([
             'name' => 'Emerald',
             'ordinal' => 4,
             'limit' => 99999,
-            'dots_start' => 1500,
-            'dots_end' => 1999
+            'dots_start' => 150,
+            'dots_end' => 199
         ]);
         
         Graduation::create([
             'name' => 'Sapphire',
             'ordinal' => 5,
             'limit' => 99999,
-            'dots_start' => 2000,
-            'dots_end' => 2499
+            'dots_start' => 200,
+            'dots_end' => 249
         ]);
         
         Graduation::create([
             'name' => 'Diamond',
             'ordinal' => 6,
             'limit' => 99999,
-            'dots_start' => 2500,
-            'dots_end' => 2999
+            'dots_start' => 250,
+            'dots_end' => 299
         ]);
     }
 

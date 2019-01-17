@@ -5,6 +5,8 @@ use App\Level;
 use App\LevelStatus;
 use App\SysUserStatus;
 use App\Http\Enum\UserStatusEnum;
+use App\Http\Enum\LevelTypeEnum;
+
 
 class LevelTableSeeder extends Seeder
 {
@@ -20,8 +22,8 @@ class LevelTableSeeder extends Seeder
         $level1 = Level::create([
             'bonus_id' => 4,
             'product_id' => 2,
-            'dots_binary' => 30,
-            'dots_unilevel' => 30,
+            'dots' => 30,
+            'type' => LevelTypeEnum::BINARY,
             'start' => 1,
             'end' => 2,
             'amount' => 15
@@ -35,8 +37,8 @@ class LevelTableSeeder extends Seeder
         $level2 = Level::create([
             'bonus_id' => 4,
             'product_id' => 3,
-            'dots_binary' => 30,
-            'dots_unilevel' => 30,
+            'dots' => 30,
+            'type' => LevelTypeEnum::UNILEVEL,
             'start' => 1,
             'end' => 2,
             'amount' => 15
@@ -50,8 +52,8 @@ class LevelTableSeeder extends Seeder
         $level3 = Level::create([
             'bonus_id' => 4,
             'product_id' => 3,
-            'dots_binary' => 30,
-            'dots_unilevel' => 30,
+            'dots' => 30,
+            'type' => LevelTypeEnum::UNILEVEL,
             'start' => 3,
             'end' => 5,
             'amount' => 10

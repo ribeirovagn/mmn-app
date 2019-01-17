@@ -40,17 +40,21 @@ class BonusController extends Controller {
     }
 
     public static function binary($level, $indicator, $item) {
+        $_transaction['level'] = $level;
+        $_transaction['indicator'] = $indicator;
+        $_transaction['item'] = $item;
 
         try {
-            if ($level->amount > 0) {
+            if ($level->amount > 0 && (int)$level->is_active === 1) {
 
                 $transaction = Transactions::create([
-                            'user_id' => $indicator->parent,
+                            'user_id' => $indicator->child,
                             'type' => TransactionsTypeEnum::BONUS,
                             'order_item_id' => $item->id,
                             'references_id' => $level->bonus->id,
                             'value' => $level->amount,
-                            'status' => $indicator->status
+                            'status' => $indicator->status,
+                            'level' => $indicator->level
                 ]);
 
                 TransactionStatus::create([
@@ -61,34 +65,50 @@ class BonusController extends Controller {
                 $userResume = UserResume::find($transaction->user_id);
                 $userResume->increment('amount', $transaction->value);
                 $userResume->increment('amount_bonus', $transaction->value);
+
+                $_transaction['transaction'] = $transaction;
+                $_transaction['user_resume'] = $userResume;
             }
-        } catch (\Exception $ex) {
-            throw \Exception('Bonus Binary Exception');
-        }        
-        
-        if ($level->dots_binary > 0) {
-            try {
+
+            if ((int) $level->dots > 0 && (int)$level->is_active === 1) {
+                
+                
+                $genealogy = \App\Genealogy::find($indicator->parent);
+                
                 $DotsBinary = DotsBinary::create([
-                            'user_id' => $indicator->parent,
+                            'user_id' => $indicator->child,
                             'status' => $indicator->status,
                             'description' => '',
                             'order_item_id' => $item->id,
-                            'dots' => $level->dots_binary,
-                            'side' => $indicator->side,
+                            'dots' => $level->dots,
+                            'side' => $genealogy->side,
                             'level' => $indicator->level,
+                            'description' => $level->bonus->name
                 ]);
 
 
                 $genealogyResume = GenealogyResume::find($DotsBinary->user_id);
                 $genealogyResume->increment('dots_binary_' . $DotsBinary->side, $DotsBinary->dots);
-            } catch (Exception $ex) {
-                throw new \Exception($ex->getMessage());
+
+                $_transaction['scoreBinary'] = $DotsBinary;
             }
+        } catch (\Exception $ex) {
+            throw new \Exception('Bonus Binary: ' . $ex->getMessage());
         }
+
+
+        return $_transaction;
     }
 
-    public static function  unilevel($level, $indicator, $item) {
-        
+    /**
+     * 
+     * @param type $level
+     * @param type $indicator
+     * @param type $item
+     * @throws type
+     */
+    public static function unilevel($level, $indicator, $item) {
+
         try {
             if ($level->amount > 0) {
 
@@ -98,7 +118,8 @@ class BonusController extends Controller {
                             'order_item_id' => $item->id,
                             'references_id' => $level->bonus->id,
                             'value' => $level->amount,
-                            'status' => $indicator->status
+                            'status' => $indicator->status,
+                            'level' => $indicator->level,
                 ]);
 
                 TransactionStatus::create([
@@ -111,15 +132,13 @@ class BonusController extends Controller {
                 $userResume->increment('amount_bonus', $transaction->value);
             }
         } catch (\Exception $ex) {
-            throw \Exception('Bonus Unilevel Exception');
-        }        
-        
-        $DotsUnilevelController = new DotsUnilevelController();
-        
-        $DotsUnilevelController->show($level, $indicator, $item);
-        
-    }
+            throw new \Exception('Bonus Unilevel Exception');
+        }
 
+        $DotsUnilevelController = new DotsUnilevelController();
+        $DotsUnilevelController->create($level, $indicator, $item);
+        $DotsUnilevelController->show($level, $indicator, $item);
+    }
 
     /**
      * Display the specified resource.
