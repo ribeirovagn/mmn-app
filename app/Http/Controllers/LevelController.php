@@ -37,12 +37,13 @@ class LevelController extends Controller {
 
             $level = Level::create($request->all());
 
-
             return response([
                 $request->all()
             ]);
         } catch (\Exception $ex) {
-            throw new \Exception($ex->getMessage());
+            return response([
+                'error' => $ex->getMessage()
+                    ], 422);
         }
     }
 
@@ -54,9 +55,9 @@ class LevelController extends Controller {
      */
     public function show($product, $type) {
         return Level::with(['statuses', 'bonus'])
-                ->where('product_id', $product)
-                ->where('type', $type)
-                ->get();
+                        ->where('product_id', $product)
+                        ->where('type', $type)
+                        ->get();
     }
 
     /**
@@ -76,8 +77,17 @@ class LevelController extends Controller {
      * @param  \App\Level  $level
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Level $level) {
-        //
+    public function update(Request $request, $id) {
+        try {
+            $level = Level::find($id);
+            $level->update($request->all());
+            return $level;
+            
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+                    ], 422);
+        }
     }
 
     /**

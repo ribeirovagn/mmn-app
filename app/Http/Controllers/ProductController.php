@@ -52,7 +52,11 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        return Product::with(['productType', 'levels'])->find($id);
+        return response([
+            'products' => Product::with(['productType', 'levels'])->find($id),
+            'types' => \App\ProductType::all(),
+            'genealogyType' => \App\SysGenealogyType::all()
+        ]);
     }
 
     /**
@@ -73,9 +77,18 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $Product = Product::find($id);
+            $Product->update($request->all());
+            return $Product;
+            
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+                    ], 422);
+        }
     }
 
     /**

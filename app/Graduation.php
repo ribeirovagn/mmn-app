@@ -14,4 +14,8 @@ class Graduation extends Model
         'dots_start',
         'dots_end'
     ];
+    
+    public function levels(){
+        return $this->hasMany('App\GraduationsLevels')->with(['dependence']);
+    }
 }

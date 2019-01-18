@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use App\GraduationsLevels;
 use Illuminate\Http\Request;
 
-class GraduationsLevelsController extends Controller
-{
+class GraduationsLevelsController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         //
     }
 
@@ -22,8 +21,7 @@ class GraduationsLevelsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -33,9 +31,26 @@ class GraduationsLevelsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        
+        $this->validate($request, [
+            'graduation_level' => 'required',
+            'quantity' => 'required'
+        ]);
+        
+        try {
+            
+            if($request->quantity < 1){
+                throw new \Exception('Invalid quantity!');
+            }
+            
+            $graduationLevel = GraduationsLevels::create($request->all());
+            return $this->show($graduationLevel->graduation_id);
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+            ], 422);
+        }
     }
 
     /**
@@ -44,9 +59,8 @@ class GraduationsLevelsController extends Controller
      * @param  \App\GraduationsLevels  $graduationsLevels
      * @return \Illuminate\Http\Response
      */
-    public function show(GraduationsLevels $graduationsLevels)
-    {
-        //
+    public function show($id) {
+        return GraduationsLevels::with(['graduation', 'dependence'])->where('graduation_id', $id)->get();
     }
 
     /**
@@ -55,8 +69,7 @@ class GraduationsLevelsController extends Controller
      * @param  \App\GraduationsLevels  $graduationsLevels
      * @return \Illuminate\Http\Response
      */
-    public function edit(GraduationsLevels $graduationsLevels)
-    {
+    public function edit(GraduationsLevels $graduationsLevels) {
         //
     }
 
@@ -67,8 +80,7 @@ class GraduationsLevelsController extends Controller
      * @param  \App\GraduationsLevels  $graduationsLevels
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, GraduationsLevels $graduationsLevels)
-    {
+    public function update(Request $request, GraduationsLevels $graduationsLevels) {
         //
     }
 
@@ -78,8 +90,8 @@ class GraduationsLevelsController extends Controller
      * @param  \App\GraduationsLevels  $graduationsLevels
      * @return \Illuminate\Http\Response
      */
-    public function destroy(GraduationsLevels $graduationsLevels)
-    {
+    public function destroy(GraduationsLevels $graduationsLevels) {
         //
     }
+
 }

@@ -17,6 +17,7 @@ class CreateGraduationsLevelsTable extends Migration
             $table->increments('id');
             $table->integer('graduation_id')->unsigned();
             $table->foreign('graduation_id')->references('id')->on('graduations');
+            $table->integer('graduation_level');
             $table->tinyInteger('quantity')->default(0);
             $table->timestamps();
         });

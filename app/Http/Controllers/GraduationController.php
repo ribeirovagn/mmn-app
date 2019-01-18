@@ -15,7 +15,7 @@ class GraduationController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        return Graduation::orderBy('ordinal', 'asc')->get();
+        return Graduation::with(['levels'])->orderBy('ordinal', 'asc')->get();
     }
 
     /**

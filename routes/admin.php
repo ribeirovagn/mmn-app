@@ -30,6 +30,7 @@ Route::group(['middleware' => ['admin', 'auth:api']], function() {
             ], function () {
         Route::post('/', 'LevelController@store');
         Route::delete('/{id}', 'LevelController@destroy');
+        Route::put('/{id}', 'LevelController@update');
     });
 
     Route::group([
@@ -47,6 +48,7 @@ Route::group(['middleware' => ['admin', 'auth:api']], function() {
         Route::get('/type', 'ProductTypeController@index');
         Route::get('/', 'ProductController@index');
         Route::post('/', 'ProductController@store');
+        Route::put('/{id}', 'ProductController@update');
     });
 
     Route::group([
@@ -65,6 +67,7 @@ Route::group(['middleware' => ['admin', 'auth:api']], function() {
             Route::get('/', 'GraduationController@index');
             Route::post('/', 'GraduationController@store');
             Route::put('/{id}', 'GraduationController@update');
+            Route::post('/level', 'GraduationsLevelsController@store');
         });
     });
     
