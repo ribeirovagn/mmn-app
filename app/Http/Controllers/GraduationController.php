@@ -30,20 +30,19 @@ class GraduationController extends Controller {
         if ($genealogyResumes->dots_unilevel > $graduationsHists->graduation->dots_end) {
             $graduations = Graduation::where('ordinal', '>', $graduationsHists->graduation->ordinal)->get();
             foreach ($graduations as $graduation) {
-                
-                if($graduation->dots_start >= $genealogyResumes->dots_unilevel){
+
+                if ($graduation->dots_start >= $genealogyResumes->dots_unilevel) {
                     break;
                 }
-                
+
                 $genealogyResumes->update([
                     'graduations_id' => $graduation->id
                 ]);
-                
+
                 GraduationsHist::create([
                     'user_id' => $user_id,
                     'graduation_id' => $graduation->id
                 ]);
-                
             }
         }
 
@@ -102,8 +101,16 @@ class GraduationController extends Controller {
      * @param  \App\Graduation  $graduation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Graduation $graduation) {
-        //
+    public function update(Request $request, $id) {
+        try {
+            $graduation = Graduation::find($id);
+            $graduation->update($request->all());
+            return $graduation;
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+                    ], 422);
+        }
     }
 
     /**

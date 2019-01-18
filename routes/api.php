@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
  */
 
 Route::get('/binarytype/{id}', 'ClosureController@store');
+Route::get('/binary-children', 'GenealogyController@binaryChildren');
 
 Route::resource('user', 'UserController')->except([
     'create', 'destroy'

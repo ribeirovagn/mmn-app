@@ -16,5 +16,10 @@ namespace App\Http\Enum;
 abstract class LevelTypeEnum {
     const BINARY = 1;
     const UNILEVEL = 2;
+    
+    const TYPE = [
+        self::BINARY => 'BINARY',
+        self::UNILEVEL => 'UNILEVEL'
+    ];
             
 }

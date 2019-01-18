@@ -30,4 +30,8 @@ class GenealogyResume extends Model
     public function genealogy(){
         return $this->belongsTo('App\Genealogy', 'user_id', 'user_id');
     }
+    
+    public function graduation(){
+        return $this->hasOne('App\Graduation', 'id', 'graduations_id');
+    }
 }

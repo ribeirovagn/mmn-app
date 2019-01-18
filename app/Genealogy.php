@@ -59,7 +59,11 @@ class Genealogy extends Model {
     }
 
     public function children() {
-        return $this->hasMany('App\Genealogy', 'indicator')->with(['user', 'status']);
+        return $this->hasMany('App\Genealogy', 'indicator')->with(['user', 'status', 'resume']);
+    }
+    
+    public function resume(){
+        return $this->hasOne('App\GenealogyResume', 'user_id', 'user_id')->with('graduation');
     }
     
     public function status(){
@@ -151,4 +155,7 @@ class Genealogy extends Model {
         return DB::select(DB::raw($query));
     }
 
+    public function binarychildren(){
+        return $this->hasOne('App\Genealogy', 'user_id', 'father')->with(['binarychildren']);
+    }
 }

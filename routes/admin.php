@@ -8,7 +8,7 @@
 
 Route::group(['middleware' => ['admin', 'auth:api']], function() {
     Route::get('oauth/logout', 'UserController@logoutApi')->middleware('auth:api');
-    
+    Route::get('business/plan', 'BusinessPlan@index');
     
     Route::group([
         'prefix' => 'users'
@@ -22,6 +22,7 @@ Route::group(['middleware' => ['admin', 'auth:api']], function() {
         Route::get('/', 'BonusController@index');
         Route::post('/', 'BonusController@store');
         Route::put('/is_active/{id}', 'BonusController@changeActive');
+        Route::put('/{id}', 'BonusController@update');
     });
 
     Route::group([

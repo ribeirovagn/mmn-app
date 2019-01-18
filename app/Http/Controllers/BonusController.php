@@ -45,7 +45,7 @@ class BonusController extends Controller {
         $_transaction['item'] = $item;
 
         try {
-            if ($level->amount > 0 && (int)$level->is_active === 1) {
+            if ($level->amount > 0 && (int) $level->is_active === 1) {
 
                 $transaction = Transactions::create([
                             'user_id' => $indicator->child,
@@ -72,11 +72,11 @@ class BonusController extends Controller {
                 $_transaction['user_resume'] = $userResume;
             }
 
-            if ((int) $level->dots > 0 && (int)$level->is_active === 1) {
-                
-                
+            if ((int) $level->dots > 0 && (int) $level->is_active === 1) {
+
+
                 $genealogy = \App\Genealogy::find($indicator->parent);
-                
+
                 $DotsBinary = DotsBinary::create([
                             'user_id' => $indicator->child,
                             'status' => $indicator->status,
@@ -171,7 +171,17 @@ class BonusController extends Controller {
      * @param  \App\Bonus  $bonus
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Bonus $bonus) {
+    public function update(Request $request, $id) {
+        try {
+            $bonus = Bonus::find($id);
+            $bonus->update($request->all());
+            return $bonus;
+        } catch (\Exception $exc) {
+            return response([
+                'error' => $exc->getMessage()
+                    ], 422);
+        }
+
         //
     }
 

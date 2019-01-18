@@ -14,6 +14,8 @@ use App\Http\Enum\BinarySideEnum;
 
 class GenealogyController extends Controller {
 
+    private $normalizedGenealogy = [];
+
     /**
      * Display a listing of the resource.
      *
@@ -55,10 +57,9 @@ class GenealogyController extends Controller {
             GenealogyResume::create([
                 'user_id' => $userCreate->id
             ]);
-            
+
             $GenealogyResume = GenealogyResume::find($request->indicator);
             $GenealogyResume->increment('indicated', 1);
-            
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage());
         }
@@ -91,10 +92,37 @@ class GenealogyController extends Controller {
         return Genealogy::where('indicator', '=', $id)->with(['user', 'leaf0', 'leaf1'])->get();
     }
 
-    
     public function family($id = null) {
         $id = (is_null($id)) ? Auth::user()->id : $id;
-        return response(Genealogy::with(['children', 'user', 'status'])->find($id));
+        return response(Genealogy::with(['children', 'user', 'status', 'resume'])->find($id));
+    }
+
+    /**
+     * 
+     * @param type $id
+     * @return type
+     */
+    public function binaryChildren($id = null) {
+        $Genealogy = Genealogy::with(['binarychildren'])->find($id);
+        $this->normalizeGenealogy($Genealogy);
+        return $this->normalizedGenealogy;
+    }
+
+    /**
+     * 
+     * @param type $Genelogies
+     */
+    private function normalizeGenealogy($Genelogies) {
+        $count = (count($this->normalizedGenealogy) + 1);
+        $this->normalizedGenealogy[$count] = $Genelogies;
+        if (isset($this->normalizedGenealogy[$count]->binarychildren)) {
+            $aux = $this->normalizedGenealogy[$count]->binarychildren;
+            unset($this->normalizedGenealogy[$count]->binarychildren);
+
+            if (!is_null($aux)) {
+                $this->normalizeGenealogy($aux);
+            }
+        }
     }
 
     /**
