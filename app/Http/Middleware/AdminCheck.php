@@ -18,12 +18,10 @@ class AdminCheck
     {
         if(Auth::check()){
             if(Auth::user()->is_admin === 0){
-                Auth::loggout();
+                Auth::logout();
                 throw new \Exception('Operation is not permited!');
             }
         }
-        
-        
         return $next($request);
     }
 }

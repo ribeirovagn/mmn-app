@@ -6,8 +6,8 @@
  * and open the template in the editor.
  */
 
-Route::group(['middleware' => ['admin', 'auth:api']], function() {
     Route::get('oauth/logout', 'UserController@logoutApi')->middleware('auth:api');
+Route::group(['middleware' => ['admin', 'auth:api']], function() {
     Route::get('business/plan', 'BusinessPlan@index');
     
     Route::group([

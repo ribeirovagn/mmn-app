@@ -60,6 +60,17 @@ class ProductController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  \App\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function showProduct($id)
+    {
+        return Product::with(['productType', 'levels'])->find($id);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Product  $product

@@ -27,7 +27,7 @@ class DotsUnilevelController extends Controller {
     public function create($level, $indicator, $item) {
         if ((int) $level->dots > 0 && (int) $level->is_active === 1) {
             $dotsUnilevel = DotsUnilevel::create([
-                        'user_id' => $indicator->parent,
+                        'user_id' => $indicator->child,
                         'dots' => $level->dots,
                         'status' => $indicator->status,
                         'type' => TypeDotsUnilevel::BONUS,
@@ -37,14 +37,20 @@ class DotsUnilevelController extends Controller {
             ]);
             $this->sumNewDots($dotsUnilevel);
         }
-        
     }
 
+    /**
+     * Incrementa os pontos e qualifica o usuario se o mesmo estiver ativo
+     * @param mixed $dotsUnilevel
+     */
     public function sumNewDots($dotsUnilevel) {
-        $genealogyResume = GenealogyResume::find($dotsUnilevel->user_id);
-        $genealogyResume->increment('dots_unilevel', $dotsUnilevel->dots);
-        $graduationController = new GraduationController();
-        $graduationController->create($dotsUnilevel->user_id);
+        if ((int) $dotsUnilevel->status === \App\Http\Enum\UserStatusEnum::ACTIVE) {
+            $genealogyResume = GenealogyResume::find($dotsUnilevel->user_id);
+            $genealogyResume->increment('dots_unilevel', $dotsUnilevel->dots);
+            $graduationController = new GraduationController();
+            $graduationController->create($dotsUnilevel->user_id);
+            return $this;
+        }
     }
 
     /**

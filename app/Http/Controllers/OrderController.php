@@ -15,6 +15,10 @@ use Carbon\Carbon;
 
 class OrderController extends Controller {
 
+    
+    protected $_SysBusinessController = null;
+
+
     /**
      * Display a listing of the resource.
      *
@@ -173,13 +177,14 @@ class OrderController extends Controller {
 //                throw new \Exception("Insufficient funds!");
             }
 
-
+            
+            $this->_SysBusinessController = SysBusinessController::show();
             $levelcontroller = new LevelController();
             $productController = new ProductController();
 
             foreach ($order->items as $item) {
 
-                $product = $productController->show($item->product_id);
+                $product = $productController->showProduct($item->product_id);
 
                 if ($product->productType->is_active === 1) {
                     switch ($product->productType->name) {
@@ -248,7 +253,6 @@ class OrderController extends Controller {
     protected function payActivation($order, $item) {
         try {
             $GenealogyController = new GenealogyController();
-            $SysBusinessController = SysBusinessController::show();
 
             $Genealogy = $GenealogyController->updateStatus($order->user_id, UserStatusEnum::ACTIVE);
             $genealogyResumes = \App\GenealogyResume::find($order->user_id);
@@ -258,7 +262,7 @@ class OrderController extends Controller {
                 'binary_percentage' => $item->product->binary_percentage,
             ]);
 
-            if ($SysBusinessController->binary === 1) {
+            if ($this->_SysBusinessController->binary === 1) {
                 $GenealogyController->binaryPositioning($order->user_id);
             }
         } catch (\Exception $ex) {
@@ -275,8 +279,8 @@ class OrderController extends Controller {
      */
     protected function payUnilevel($order, $item) {
         try {
-            $SysBusinessController = SysBusinessController::show();
-            if ($SysBusinessController->unilevel === 1) {
+
+            if ((int)$this->_SysBusinessController->unilevel === 1) {
                 $levelController = new LevelController();
                 $levels = $levelController->show($item->product_id, \App\Http\Enum\LevelTypeEnum::UNILEVEL);
 
@@ -291,7 +295,7 @@ class OrderController extends Controller {
                 }
             }
         } catch (\Exception $exc) {
-            throw new \Exception('Multilevel ' . $exc->getMessage());
+            throw new \Exception('Unilevel ' . $exc->getMessage());
         }
     }
 
@@ -304,8 +308,8 @@ class OrderController extends Controller {
      */
     protected function payBinary($order, $item) {
         try {
-            $SysBusinessController = SysBusinessController::show();
-            if ($SysBusinessController->binary === 1) {
+
+            if ((int)$this->_SysBusinessController->binary === 1) {
                 $levelController = new LevelController();
                 $levels = $levelController->show($item->product_id, \App\Http\Enum\LevelTypeEnum::BINARY);
 
@@ -321,7 +325,7 @@ class OrderController extends Controller {
             }
             
         } catch (\Exception $exc) {
-            throw new \Exception('Multilevel ' . $exc->getMessage());
+            throw new \Exception('Binary ' . $exc->getMessage());
         }
     }
 

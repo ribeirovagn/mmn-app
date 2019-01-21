@@ -46,7 +46,8 @@ class UserController extends Controller {
             'email' => 'required|email|unique:users',
             'password' => 'required',
             'indicator' => 'required',
-            'username' => 'required|unique:users'
+            'username' => 'required|unique:users',
+            'recaptcha' => 'required'
         ]);
 
         DB::beginTransaction();
@@ -78,12 +79,12 @@ class UserController extends Controller {
             DB::commit();
 
             return response([
-                'user' => $GenealogyController->show($userCreate->id)
+                'user' => $userCreate
                     ], 201);
         } catch (\Exception $ex) {
             DB::rollBack();
             return response([
-                'error' => $ex->getMessage()
+                'error' => $ex->getTrace()
                     ], 422);
         }
     }

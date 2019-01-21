@@ -168,11 +168,11 @@ class GenealogyController extends Controller {
                             'message' => 'Binary is valid'
                                 ], 200);
                     }
-                    throw new \Exception('Is not valid');
+                    throw new \Exception('Sponsor is not valid!');
                 }
 
                 return response([
-                    'user' => $user,
+                    'user' => $user->id,
                     'message' => 'Unilevel is valid'
                         ], 200);
             }

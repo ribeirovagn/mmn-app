@@ -64,12 +64,10 @@ class BonusController extends Controller {
                     'status' => $transaction->status
                 ]);
 
-                $userResume = UserResume::find($transaction->user_id);
-                $userResume->increment('amount', $transaction->value);
-                $userResume->increment('amount_bonus', $transaction->value);
+                self::incrementBonus($transaction, $level);
 
                 $_transaction['transaction'] = $transaction;
-                $_transaction['user_resume'] = $userResume;
+                
             }
 
             if ((int) $level->dots > 0 && (int) $level->is_active === 1) {
@@ -90,7 +88,10 @@ class BonusController extends Controller {
 
 
                 $genealogyResume = GenealogyResume::find($DotsBinary->user_id);
-                $genealogyResume->increment('dots_binary_' . $DotsBinary->side, $DotsBinary->dots);
+
+                if ((int) $DotsBinary->status === \App\Http\Enum\UserStatusEnum::ACTIVE) {
+                    $genealogyResume->increment('dots_binary_' . $DotsBinary->side, $DotsBinary->dots);
+                }
 
                 $_transaction['scoreBinary'] = $DotsBinary;
             }
@@ -131,9 +132,7 @@ class BonusController extends Controller {
                     'status' => TransactionsStatusEnum::SUCCESS
                 ]);
 
-                $userResume = UserResume::find($transaction->user_id);
-                $userResume->increment('amount', $transaction->value);
-                $userResume->increment('amount_bonus', $transaction->value);
+                self::incrementBonus($transaction, $level);
             }
         } catch (\Exception $ex) {
             throw new \Exception('Bonus Unilevel Exception');
@@ -142,6 +141,15 @@ class BonusController extends Controller {
         $DotsUnilevelController = new DotsUnilevelController();
         $DotsUnilevelController->create($level, $indicator, $item);
         $DotsUnilevelController->show($level, $indicator, $item);
+    }
+
+    public static function incrementBonus($transaction, $level) {
+        if (in_array($level->bonus->id, [\App\Http\Enum\FixedBonusEnum::DIRECT_SALE . \App\Http\Enum\FixedBonusEnum::DIRECT_INDICATION]) || \App\Http\Enum\UserStatusEnum::ACTIVE) {
+
+            $userResume = UserResume::find($transaction->user_id);
+            $userResume->increment('amount', $transaction->value);
+            $userResume->increment('amount_bonus', $transaction->value);
+        }
     }
 
     /**
