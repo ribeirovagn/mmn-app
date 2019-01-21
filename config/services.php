@@ -39,5 +39,12 @@ return [
             'tolerance' => env('STRIPE_WEBHOOK_TOLERANCE', 300),
         ],
     ],
+    
+    'recaptcha' => [
+        'active' => env('CAPTCHA_ACTIVE', true),
+        'secret' => env('GOOGLE_RECAPTCHA_SECRET', '6LeHN4sUAAAAAHH1IZUW2gMnfuu6EHV0pQg35Ahh'),
+        'site' => env('GOOGLE_RECAPTCHA_KEY', '6LeHN4sUAAAAAIx9y6Ku4uGbFWZa7ilmJPlhdqMa'),
+        'siteverify' => env('SITE_VERIFY','https://www.google.com/recaptcha/api/siteverify')
+    ],        
 
 ];

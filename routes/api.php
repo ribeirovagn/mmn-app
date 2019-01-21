@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
   |
  */
 
+Route::post('/oauth', 'Auth\LoginController@oauth')->middleware('recaptcha');
+
+
 Route::get('/binarytype/{id}', 'ClosureController@store');
 Route::get('/binary-children', 'GenealogyController@binaryChildren');
 

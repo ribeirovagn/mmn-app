@@ -15,9 +15,9 @@ class CreateSysBusinessesTable extends Migration
     {
         Schema::create('sys_businesses', function (Blueprint $table) {
             $table->increments('id');
-            $table->boolean('binary')->default(true);
+            $table->boolean('binary')->default(false);
             $table->boolean('unilevel')->default(true);
-            $table->boolean('withdraw_is_active')->default(true);
+            $table->boolean('withdraw_is_active')->default(false);
             $table->decimal('withdraw_tax', 8, 2)->default(0);
             $table->boolean('leadership_balance')->default(false);
             $table->integer('sys_binary_type_id')->nullable();
