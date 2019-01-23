@@ -73,8 +73,7 @@ class User extends Authenticatable {
     
     public function graduations(){
         return $this->hasMany('App\GraduationsHist')
-                ->join('graduations', 'graduations.id', 'graduations_hists.graduation_id')
-                ->orderBy('ordinal', 'desc');
+                ->with('graduation');
     }
 
 }

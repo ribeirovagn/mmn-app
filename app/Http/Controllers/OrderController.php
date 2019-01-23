@@ -109,7 +109,9 @@ class OrderController extends Controller {
     public function show($id = null) {
         return Order::with([
                     'statuses',
-                    'items'
+                    'status',
+                    'items',
+                    'user'
                 ])->find($id);
     }
 

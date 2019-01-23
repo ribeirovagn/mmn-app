@@ -66,6 +66,7 @@ class GenealogyController extends Controller {
     }
 
     /**
+     * 
      * Display the specified resource.
      *
      * @param  \App\Genealogy  $genealogy
@@ -262,8 +263,41 @@ class GenealogyController extends Controller {
         }
     }
 
-    protected function leafs($user_id) {
-        return Genealogy::with(['leaf0', 'leaf1'])->find($user_id);
+    public function leafs($user_id = null) {
+        $user_id = (is_null($user_id)) ? Auth::user()->id : $user_id;
+        
+        $first =  Genealogy::with(['user', 'leaf0', 'leaf1'])->findOrFail($user_id);
+        
+        $second['1'] = (isset($first->leaf0)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($first->leaf0->user_id) : null;
+        $second['2'] = (isset($first->leaf1)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($first->leaf1->user_id) : null;
+
+        $third['1'] = (isset($second['1']->leaf0)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($second['1']->leaf0->user_id) : null;
+        $third['2'] = (isset($second['1']->leaf1)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($second['1']->leaf1->user_id) : null;
+        $third['3'] = (isset($second['2']->leaf0)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($second['2']->leaf0->user_id) : null;
+        $third['4'] = (isset($second['2']->leaf1)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($second['2']->leaf1->user_id) : null;
+
+        $fourth['1'] = (isset($third['1']->leaf0)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($third['1']->leaf0->user_id) : null;
+        $fourth['2'] = (isset($third['1']->leaf1)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($third['1']->leaf1->user_id) : null;
+        $fourth['3'] = (isset($third['2']->leaf0)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($third['2']->leaf0->user_id) : null;
+        $fourth['4'] = (isset($third['2']->leaf1)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($third['2']->leaf1->user_id) : null;
+        $fourth['5'] = (isset($third['3']->leaf0)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($third['3']->leaf0->user_id) : null;
+        $fourth['6'] = (isset($third['3']->leaf1)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($third['3']->leaf1->user_id) : null;
+        $fourth['7'] = (isset($third['4']->leaf0)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($third['4']->leaf0->user_id) : null;
+        $fourth['8'] = (isset($third['4']->leaf1)) ? Genealogy::with(['user', 'leaf0', 'leaf1'])->find($third['4']->leaf1->user_id) : null;
+        
+        
+        return response([
+            'first' => $first,
+            'second' => $second,
+            'third' => $third,
+            'fourth' => $fourth,
+        ], 200);
+        
+    }
+    
+    
+    private function isNodeValid(){
+        
     }
 
     public static function indicatorsAsc($node) {

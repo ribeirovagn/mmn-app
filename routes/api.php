@@ -39,6 +39,8 @@ Route::group([
     Route::get('/family/{id}', 'GenealogyController@family')->name('genealogy.family');
     Route::put('/change-side/{id}', 'GenealogyController@changeSide')->name('genealogy.change-side');
     Route::get('/', 'GenealogyController@index')->name('genealogies');
+    Route::get('children/{leafs}', 'GenealogyController@leafs');
+    Route::get('children', 'GenealogyController@leafs');
     
    
     Route::group([

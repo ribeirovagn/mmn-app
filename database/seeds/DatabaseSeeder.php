@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
          $this->call(SysBinaryTypeTable::class);
          $this->call(SysTransactionOperationTypeTable::class);
          $this->call(SysGenealogyTypeTable::class);
+         $this->call(SysWithdrawTypeTable::class);
     }
 }

@@ -67,14 +67,11 @@ class BonusController extends Controller {
                 self::incrementBonus($transaction, $level);
 
                 $_transaction['transaction'] = $transaction;
-                
             }
 
             if ((int) $level->dots > 0 && (int) $level->is_active === 1) {
 
-
                 $genealogy = \App\Genealogy::find($indicator->parent);
-
                 $DotsBinary = DotsBinary::create([
                             'user_id' => $indicator->child,
                             'status' => $indicator->status,
@@ -83,13 +80,11 @@ class BonusController extends Controller {
                             'dots' => $level->dots,
                             'side' => $genealogy->side,
                             'level' => $indicator->level,
-                            'description' => $level->bonus->name
+                            'description' => $level->bonus->name . " ORDER ITEM #" . $item->id
                 ]);
 
-
-                $genealogyResume = GenealogyResume::find($DotsBinary->user_id);
-
                 if ((int) $DotsBinary->status === \App\Http\Enum\UserStatusEnum::ACTIVE) {
+                    $genealogyResume = GenealogyResume::find($DotsBinary->user_id);
                     $genealogyResume->increment('dots_binary_' . $DotsBinary->side, $DotsBinary->dots);
                 }
 
@@ -143,8 +138,14 @@ class BonusController extends Controller {
         $DotsUnilevelController->show($level, $indicator, $item);
     }
 
+    /**
+     * 
+     * @param App\Transaction $transaction
+     * @param App\Level $level
+     */
     public static function incrementBonus($transaction, $level) {
-        if (in_array($level->bonus->id, [\App\Http\Enum\FixedBonusEnum::DIRECT_SALE . \App\Http\Enum\FixedBonusEnum::DIRECT_INDICATION]) || \App\Http\Enum\UserStatusEnum::ACTIVE) {
+        if (in_array($level->bonus->id, [\App\Http\Enum\FixedBonusEnum::DIRECT_SALE , \App\Http\Enum\FixedBonusEnum::DIRECT_INDICATION]) 
+                || ($transaction->status === \App\Http\Enum\UserStatusEnum::ACTIVE)) {
 
             $userResume = UserResume::find($transaction->user_id);
             $userResume->increment('amount', $transaction->value);

@@ -47,7 +47,7 @@ class Genealogy extends Model {
      * @return type
      */
     public function leaf0() {
-        return $this->hasOne('App\Genealogy', 'user_id', 'child_0');
+        return $this->hasOne('App\Genealogy', 'user_id', 'child_0')->with('user');
     }
 
     /**
@@ -55,7 +55,7 @@ class Genealogy extends Model {
      * @return mixed
      */
     public function leaf1() {
-        return $this->hasOne('App\Genealogy', 'user_id', 'child_1');
+        return $this->hasOne('App\Genealogy', 'user_id', 'child_1')->with('user');
     }
 
     public function children() {

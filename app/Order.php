@@ -18,7 +18,11 @@ class Order extends Model {
     ];
 
     public function statuses() {
-        return $this->hasMany('App\OrderStatus')->join('sys_order_statuses', 'sys_order_statuses.id', 'order_statuses.status');
+        return $this->hasMany('App\OrderStatus')->with('status');
+    }
+    
+    public function status(){
+        return $this->belongsTo('App\SysOrderStatus', 'status');
     }
 
     public function items() {
@@ -27,6 +31,10 @@ class Order extends Model {
 
     public function levels() {
         return $this->hasManyThrough('App\Level', 'App\OrderItem', 'product_id', 'product_id', 'id', 'products_id');
+    }
+    
+    public function user(){
+        return $this->belongsTo('App\User', 'user_id');
     }
 
 }
