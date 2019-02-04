@@ -13,7 +13,8 @@ class UserResume extends Model {
         'amount_lidership',
         'debit_lidership',
         'bonus_limits',
-        'amount_bonus'
+        'amount_bonus',
+        'reversal'
     ];
     
     public $timestamps = false;

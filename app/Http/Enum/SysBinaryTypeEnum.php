@@ -19,7 +19,7 @@ abstract class SysBinaryTypeEnum {
     const QUOTES = 2;
     
     const TYPES = [
-        self::MAIN => "MAIN",
+        self::MAIN => "DEFAULT",
         self::QUOTES => "QUOTES"
     ];
 

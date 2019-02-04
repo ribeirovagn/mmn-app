@@ -15,7 +15,14 @@ class CreateBanksTable extends Migration
     {
         Schema::create('banks', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('code');
+            $table->integer('country_id')->unsigned();
+            $table->foreign('country_id')->references('id')->on('countries');
+            $table->string('name');
+            $table->string('url')->nullable();
+            $table->boolean('main')->default(0);            
             $table->timestamps();
+            
         });
     }
 

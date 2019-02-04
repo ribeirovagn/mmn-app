@@ -6,10 +6,10 @@
  * and open the template in the editor.
  */
 
-    Route::get('oauth/logout', 'UserController@logoutApi')->middleware('auth:api');
+Route::get('oauth/logout', 'UserController@logoutApi')->middleware('auth:api');
 Route::group(['middleware' => ['admin', 'auth:api']], function() {
     Route::get('business/plan', 'BusinessPlan@index');
-    
+
     Route::group([
         'prefix' => 'users'
             ], function () {
@@ -36,9 +36,11 @@ Route::group(['middleware' => ['admin', 'auth:api']], function() {
     Route::group([
         'prefix' => 'financial'
             ], function () {
-        Route::get('/withdraw', 'UserResumeController@withdrawByStatus');
-        Route::get('/withdraw/show/{id}', 'TransactionsController@showWithdraw');
-        Route::put('/withdraw/update/{id}', 'TransactionsController@updateWithdraw');
+        Route::group(['prefix' => 'withdraw'], function () {
+            Route::get('/', 'UserResumeController@withdrawByStatus');
+            Route::get('/show/{id}', 'WithdrawController@show');
+            Route::put('/update/{id}', 'WithdrawController@update');
+        });
     });
 
     Route::group([
@@ -70,11 +72,11 @@ Route::group(['middleware' => ['admin', 'auth:api']], function() {
             Route::post('/level', 'GraduationsLevelsController@store');
         });
     });
-    
-    
+
+
     Route::group([
         'prefix' => 'order'
-    ], function () {
+            ], function () {
         Route::get('/', 'OrderController@index');
     });
 });

@@ -86,57 +86,31 @@ class TransactionsController extends Controller {
 
         $userID = is_null($id) ? Auth::user()->id : $id;
 
-        $Transactions = Transactions::with('statuses')
+        $Transactions = Transactions::with(['statuses', 'bankDraft', 'status'])
                 ->where('user_id', $userID)
                 ->whereIn('type', [TransactionsTypeEnum::WITHDRAW, TransactionsTypeEnum::WITHDRAW_TAX])
                 ->orderBy('created_at', 'desc')
                 ->get();
         return response([
             'transactions' => $Transactions,
-            'types' => TransactionsTypeEnum::TYPE,
             'resume' => \App\UserResume::find($userID),
-            'statuses' => \App\Http\Enum\TransactionsStatusEnum::STATUS
+            'statuses' => WithdrawController::listStatus()
         ]);
     }
 
     public function showWithdraw($id) {
 
-        $Transactions = Transactions::with(['statuses', 'related', 'user'])
+        $Transactions = Transactions::with(['statuses', 'related', 'user', 'status'])
                 ->where('id', $id)
                 ->where('type', TransactionsTypeEnum::WITHDRAW)
                 ->first();
         return response([
             'transaction' => $Transactions,
             'resume' => \App\UserResume::find($Transactions->user_id),
-            'statuses' => \App\Http\Enum\TransactionsStatusEnum::STATUS
+            'statuses' => WithdrawController::listStatus()
         ]);
     }
 
-    /**
-     * 
-     * @param Request $request
-     * @param int $id
-     * @return type
-     */
-    public function updateWithdraw(Request $request, $id) {
-        try {
-            $transaction = Transactions::find($id);
-
-            $transaction->update([
-                'status' => $request->status
-            ]);
-
-            \App\TransactionStatus::create([
-                'transaction_id' => $transaction->id,
-                'status' => $transaction->status,
-                'note' => $request->note
-            ]);
-        } catch (\Exception $exc) {
-            return response([
-                'error' => $exc->getMessage()
-                    ], 422);
-        }
-    }
     
 
     /**

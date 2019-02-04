@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'admin' => \App\Http\Middleware\AdminCheck::class,
         'recaptcha' => \App\Http\Middleware\Recaptcha::class,
+        '2fa' => \PragmaRX\Google2FALaravel\Middleware::class,
     ];
 
     /**

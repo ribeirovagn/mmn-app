@@ -13,7 +13,15 @@ class SysBusinessController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        return SysBusiness::first();
+        
+        $sysBusiness = SysBusiness::with('binarytype')->first();
+        
+        
+        return response([
+            'sysBusiness' => $sysBusiness,
+            'binaryTypes' => \App\SysBinaryType::all(),
+            'withdrawTypes' => \App\SysWithdrawType::all()
+        ], 200);
     }
 
     /**

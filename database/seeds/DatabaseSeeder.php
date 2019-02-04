@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+         $this->call(CountryTable::class);
          $this->call(GraduationSeeder::class);
          $this->call(SysUserStatusTableSeeder::class);
          $this->call(UserSeed::class);
@@ -26,5 +27,8 @@ class DatabaseSeeder extends Seeder
          $this->call(SysTransactionOperationTypeTable::class);
          $this->call(SysGenealogyTypeTable::class);
          $this->call(SysWithdrawTypeTable::class);
+         $this->call(BanksTable::class);
+         $this->call(SysTypeAccountWithdrawTable::class);
+
     }
 }

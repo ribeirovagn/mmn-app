@@ -103,6 +103,8 @@ class UserResumeController extends Controller {
             if ($request->amount <= 0) {
                 throw new \Exception('The value must be greater than 0!');
             }
+            
+            $this->isValidType($request->type_id);
 
             $totalWithdraw = ($request->amount + $sysBusiness->withdraw_tax);
 
@@ -120,7 +122,8 @@ class UserResumeController extends Controller {
                             'description' => TransactionsTypeEnum::TYPE[TransactionsTypeEnum::WITHDRAW],
                             'value' => $request->amount,
                             'status' => \App\Http\Enum\TransactionsStatusEnum::PENDING,
-                            'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::DEBIT
+                            'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::DEBIT,
+                            'bank_draft_id' => $request->type_id
                 ]);
 
                 TransactionStatus::create([
@@ -157,6 +160,13 @@ class UserResumeController extends Controller {
                     ], 422);
         }
     }
+    
+    protected function isValidType($type){
+        $SysTypeAccountWithdraw = \App\BankDraft::where('user_id', Auth::user()->id)->where('id', $type)->first();
+        if(is_null($SysTypeAccountWithdraw)){
+            throw new \Exception('Account not found or invalid!');
+        }
+    }
 
     /**
      * 
@@ -165,7 +175,7 @@ class UserResumeController extends Controller {
         $statuses = \App\Http\Enum\TransactionsStatusEnum::STATUS;
         $transaction = [];
         foreach ($statuses as $key => $value) {
-            $transaction[$value] = Transactions::with(['statuses', 'user'])
+            $transaction[$value] = Transactions::with(['statuses', 'user', 'bankDraft'])
                     ->where('status', $key)
                     ->whereIn('type', [TransactionsTypeEnum::WITHDRAW])
                     ->orderBy('created_at', 'desc')

@@ -254,8 +254,8 @@ class OrderController extends Controller {
      */
     protected function payActivation($order, $item) {
         try {
+            
             $GenealogyController = new GenealogyController();
-
             $Genealogy = $GenealogyController->updateStatus($order->user_id, UserStatusEnum::ACTIVE);
             $genealogyResumes = \App\GenealogyResume::find($order->user_id);
 

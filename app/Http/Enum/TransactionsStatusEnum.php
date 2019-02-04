@@ -15,13 +15,15 @@ namespace App\Http\Enum;
  */
 abstract class TransactionsStatusEnum {
     const PENDING = 1;
-    const COMPLETED = 2;
-    const SUCCESS = 3;
-    const CANCELED = 4;
-    const REVERSAL = 5;
+    const PROCESSING = 2;
+    const COMPLETED = 3;
+    const SUCCESS = 4;
+    const CANCELED = 5;
+    const REVERSAL = 6;
     
     const STATUS = [
         self::PENDING => 'PENDING',
+        self::PROCESSING => 'PROCESSING',
         self::COMPLETED => 'COMPLETED',
         self::SUCCESS => 'SUCCESS',
         self::CANCELED => 'CANCELED',
