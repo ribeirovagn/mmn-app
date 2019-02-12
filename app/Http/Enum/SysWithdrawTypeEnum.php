@@ -19,6 +19,6 @@ abstract class SysWithdrawTypeEnum {
     
     const TYPE = [
         self::PLATAFORM => 'PLATAFORM',
-        self::CLIENT => 'CLIENT'
+        self::CLIENT => 'BANK'
     ];
 }

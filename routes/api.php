@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
  */
 
 Route::post('/oauth', 'Auth\LoginController@oauth')->middleware('recaptcha');
+Route::get('oauth/logout', 'UserController@logoutApi')->middleware('auth:api');
 
 
 Route::get('/binarytype/{id}', 'ClosureController@store');
@@ -24,7 +25,6 @@ Route::resource('user', 'UserController')->except([
 ]);
 
 
-Route::get('oauth/logout', 'UserController@logoutApi')->middleware('auth:api');
 Route::get('genealogy/verify/{indicator}', 'GenealogyController@verify');
 
 Route::group([

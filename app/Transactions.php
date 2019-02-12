@@ -9,7 +9,7 @@ class Transactions extends Model
     protected $fillable = ['user_id', 'references_id', 'value', 'status', 'type', 'level', 'related', 'description', 'note', 'operation', 'bank_draft_id'];
     
    
-    protected $hidden = ['user_id', 'operation', 'type', 'bank_draft_id'];
+    protected $hidden = ['user_id', 'bank_draft_id'];
 
 
     public function statuses(){
@@ -40,5 +40,10 @@ class Transactions extends Model
     
     public function bankDraft(){
         return $this->belongsTo('App\BankDraft')->with(['type_account', 'bank']);
+    }
+    
+    public function withdrawTax(){
+        return $this->hasOne('App\Transactions', 'related');
+                
     }
 }

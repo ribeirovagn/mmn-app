@@ -23,7 +23,6 @@ class CreateSysBusinessesTable extends Migration
             $table->decimal('withdraw_tax', 8, 2)->default(0);
             $table->boolean('leadership_balance')->default(false);
             $table->integer('sys_binary_type_id')->nullable()->comment('Tipo de fechamento binário');
-            $table->integer('sys_withdraw_type_id')->default(SysWithdrawTypeEnum::PLATAFORM)->comment('Tipo de pagamento de saques'); // Tipo de pagamento de saques
             $table->timestamps();
         });
     }

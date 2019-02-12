@@ -13,7 +13,7 @@ class SysBusinessSeeder extends Seeder
     public function run()
     {
         SysBusiness::create([
-            'binary' => false,
+            'binary' => true,
             'unilevel' => true,
         ]);
     }

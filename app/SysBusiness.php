@@ -12,8 +12,7 @@ class SysBusiness extends Model {
         'leadership_balance',
         'withdraw_is_active',
         'withdraw_tax',
-        'sys_binary_type_id',
-        'sys_withdraw_type_id'
+        'sys_binary_type_id'
     ];
     
     /**
