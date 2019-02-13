@@ -39,6 +39,7 @@ use AuthenticatesUsers;
     }
 
     public function oauth(Request $request) {
+            
         $this->validate($request, [
             'username' => 'required|email',
             'password' => 'required',
