@@ -47,30 +47,26 @@ use AuthenticatesUsers;
             'client_secret' => 'required',
             'recaptcha' => 'required'
         ]);
-
         try {
+            $req = Request::create('/oauth/token', 'POST', $request->all());
+            $res = app()->handle($req);
+            $responseBody = $res->getContent();
+            $response = json_decode($responseBody, true);
 
-            $client = new Client();
-            $response = $client->request('POST', env("LOGIN_URL"), [
-                'form_params' => $request->all()
-            ]);
+            if (isset($response['error'])) {
+                if ($response['error'] === 'invalid_credentials') {
+                    throw new \Exception('Dados Inválidos. Tente Novamente.');
+                }
 
-
-            if (is_null($response)) {
-                throw new \Exception("Sem retorno");
+                if ($response['error'] === 'invalid_request') {
+                    throw new \Exception('Dados Inválidos. Tente Novamente.');
+                }
+                throw new \Exception($response['error']);
             }
 
-            return response(
-                    json_decode($response->getBody(), true)
-                    , $response->getStatusCode());
-            
-        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-            if ($e->getCode() === 400) {
-                return response(['message' => 'Dados não fornecidos. Favor fornecer usuário e senha.'], Response::HTTP_BAD_REQUEST);
-            } else if ($e->getCode() === 401) {
-                return response(['message' => 'Dados inválidos. Tente novamente.'], Response::HTTP_UNAUTHORIZED);
-            }
-            return response(['message' => 'Erro interno do servidor.'], $e->getCode());
+            return $response;
+        } catch (\Exception $e) {
+            return response(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
