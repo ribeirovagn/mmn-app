@@ -16,6 +16,7 @@ class CreateSysWithdrawTypesTable extends Migration
         Schema::create('sys_withdraw_types', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->boolean('is_active')->default(false);
             $table->string('description')->nullable();
             $table->timestamps();
         });

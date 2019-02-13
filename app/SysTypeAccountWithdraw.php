@@ -14,7 +14,6 @@ class SysTypeAccountWithdraw extends Model
     
     protected $hidden = [
         'created_at',
-        'updated_at',
-        'is_active'
+        'updated_at'
     ];
 }

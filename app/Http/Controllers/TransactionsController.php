@@ -86,9 +86,9 @@ class TransactionsController extends Controller {
 
         $userID = is_null($id) ? Auth::user()->id : $id;
 
-        $Transactions = Transactions::with(['statuses', 'bankDraft', 'status'])
+        $Transactions = Transactions::with(['statuses', 'bankDraft', 'status', 'withdrawTax'])
                 ->where('user_id', $userID)
-                ->whereIn('type', [TransactionsTypeEnum::WITHDRAW, TransactionsTypeEnum::WITHDRAW_TAX])
+                ->whereIn('type', [TransactionsTypeEnum::WITHDRAW])
                 ->orderBy('created_at', 'desc')
                 ->get();
         return response([
@@ -100,7 +100,7 @@ class TransactionsController extends Controller {
 
     public function showWithdraw($id) {
 
-        $Transactions = Transactions::with(['statuses', 'related', 'user', 'status'])
+        $Transactions = Transactions::with(['statuses', 'withdrawTax', 'user', 'status'])
                 ->where('id', $id)
                 ->where('type', TransactionsTypeEnum::WITHDRAW)
                 ->first();

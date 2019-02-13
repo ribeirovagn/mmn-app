@@ -27,7 +27,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('level')->nullable();
             $table->integer('related')->nullable()->comment('Usando quando uma transacao é vinculada a outra por exemplo a taxa de um saque');
             $table->tinyInteger('operation')->comment('Credito ou Debito');
-            $table->integer('bank_draft_id');
+            $table->integer('bank_draft_id')->nullable();
             $table->timestamps();
         });
     }

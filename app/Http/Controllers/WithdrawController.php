@@ -67,7 +67,7 @@ class WithdrawController extends Controller {
      */
     public function showSpecificByUser($id) {
         try {
-            $Transactions = Transactions::with(['statuses', 'bankDraft', 'user', 'status'])
+            $Transactions = Transactions::with(['statuses', 'bankDraft', 'user', 'status', 'withdrawTax'])
                     ->where('id', $id)
                     ->whereIn('type', [TransactionsTypeEnum::WITHDRAW])
                     ->where('user_id', Auth::user()->id)
