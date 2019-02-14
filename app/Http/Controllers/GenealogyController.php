@@ -100,11 +100,14 @@ class GenealogyController extends Controller {
 
     /**
      * 
+     * Recupera a linha de pais de um franqueado
      * @param type $id
      * @return type
      */
-    public function binaryChildren($id = null) {
-        $Genealogy = Genealogy::with(['binarychildren'])->find($id);
+    public function getFather($id = null) {
+//        $id = is_null($id) ? Auth::user()->id : $id;
+        $this->normalizedGenealogy = [];
+        $Genealogy = Genealogy::with(['binaryfather', 'father', 'user'])->find($id);
         $this->normalizeGenealogy($Genealogy);
         return $this->normalizedGenealogy;
     }
@@ -114,14 +117,44 @@ class GenealogyController extends Controller {
      * @param type $Genelogies
      */
     private function normalizeGenealogy($Genelogies) {
-        $count = (count($this->normalizedGenealogy) + 1);
+        $count = (count($this->normalizedGenealogy));
         $this->normalizedGenealogy[$count] = $Genelogies;
-        if (isset($this->normalizedGenealogy[$count]->binarychildren)) {
-            $aux = $this->normalizedGenealogy[$count]->binarychildren;
-            unset($this->normalizedGenealogy[$count]->binarychildren);
-
+        if (isset($this->normalizedGenealogy[$count]->binaryfather)) {
+            $aux = $this->normalizedGenealogy[$count]->binaryfather;
+            unset($this->normalizedGenealogy[$count]->binaryfather);
             if (!is_null($aux)) {
-                $this->normalizeGenealogy($aux);
+                return $this->normalizeGenealogy($aux);
+            }
+        }
+    }
+
+    /**
+     * 
+     * Recupera a linha de pais de um franqueado
+     * @param type $id
+     * @return type
+     */
+    public function getindicador($id = null) {
+        $this->normalizedGenealogy = [];
+//        $id = is_null($id) ? Auth::user()->id : $id;
+        $Genealogy = Genealogy::with(['unilevelindicator', 'indicator', 'user'])->find($id);
+        
+        $this->normalizeGenealogyUnilevel($Genealogy);
+        return $this->normalizedGenealogy;
+    }
+
+    /**
+     * 
+     * @param type $Genelogies
+     */
+    private function normalizeGenealogyUnilevel($Genelogies) {
+        $count = (count($this->normalizedGenealogy));
+        $this->normalizedGenealogy[$count] = $Genelogies;
+        if (isset($this->normalizedGenealogy[$count]->unilevelindicator)) {
+            $aux = $this->normalizedGenealogy[$count]->unilevelindicator;
+            unset($this->normalizedGenealogy[$count]->unilevelindicator);
+            if (!is_null($aux)) {
+                return $this->normalizeGenealogyUnilevel($aux);
             }
         }
     }

@@ -18,7 +18,8 @@ Route::get('oauth/logout', 'UserController@logoutApi')->middleware('auth:api');
 
 
 Route::get('/binarytype/{id}', 'ClosureController@store');
-Route::get('/binary-children', 'GenealogyController@binaryChildren');
+Route::get('/getfather/{id}', 'GenealogyController@getfather');
+Route::get('/getfather', 'GenealogyController@getfather');
 
 Route::resource('user', 'UserController')->except([
     'create', 'destroy'

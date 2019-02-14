@@ -24,7 +24,7 @@ class DotsUnilevelController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($level, $indicator, $item) {
+    public function create($level) {
         if ((int) $level->dots > 0 && (int) $level->is_active === 1) {
             $dotsUnilevel = DotsUnilevel::create([
                         'user_id' => $indicator->child,

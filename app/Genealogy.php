@@ -57,6 +57,14 @@ class Genealogy extends Model {
     public function leaf1() {
         return $this->hasOne('App\Genealogy', 'user_id', 'child_1')->with('user');
     }
+    
+    public function father(){
+        return $this->hasOne('App\Genealogy', 'user_id', 'father')->with(['user']);
+    }
+    
+    public function indicator(){
+        return $this->hasOne('App\Genealogy', 'user_id', 'indicator')->with(['user']);
+    }
 
     public function children() {
         return $this->hasMany('App\Genealogy', 'indicator')->with(['user', 'status', 'resume']);
@@ -155,7 +163,22 @@ class Genealogy extends Model {
         return DB::select(DB::raw($query));
     }
 
-    public function binarychildren(){
-        return $this->hasOne('App\Genealogy', 'user_id', 'father')->with(['binarychildren']);
+    
+    /**
+     * Search father
+     * @return type
+     */
+    public function binaryfather(){
+        return $this->hasOne('App\Genealogy', 'user_id', 'father')->with(['binaryfather', 'father', 'user']);
     }
+
+    
+    /**
+     * Search indicators
+     * @return type
+     */
+    public function unilevelindicator(){
+        return $this->hasOne('App\Genealogy', 'user_id', 'indicator')->with(['unilevelindicator','indicator', 'user']);
+    }
+
 }

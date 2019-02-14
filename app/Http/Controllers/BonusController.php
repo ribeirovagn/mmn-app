@@ -13,6 +13,7 @@ use App\DotsBinary;
 use App\DotsUnilevel;
 use Illuminate\Http\Request;
 use App\Http\Enum\TransactionsTypeEnum;
+use App\Http\Enum\TypeDotsUnilevel;
 
 class BonusController extends Controller {
 
@@ -39,56 +40,50 @@ class BonusController extends Controller {
         return $bonus;
     }
 
-    public static function binary($level, $indicator, $item) {
-        $_transaction['level'] = $level;
-        $_transaction['indicator'] = $indicator;
-        $_transaction['item'] = $item;
-
+    public static function binary($level) {
+        $_transaction = [];
         try {
-            if ($level->amount > 0 && (int) $level->is_active === 1) {
+            foreach ($level['levels'] as $_level) {
+                if ($_level->amount > 0 && (int) $_level->is_active === 1) {
+                    $transaction = Transactions::create([
+                                'user_id' => $level['node']->user_id,
+                                'type' => TransactionsTypeEnum::BONUS,
+                                'order_item_id' => $level['item']->order_id,
+                                'references_id' => $_level->bonus->id,
+                                'value' => $_level->amount,
+                                'status' => TransactionsStatusEnum::SUCCESS,
+                                'level' => $level['level'],
+                                'description' => 'BINARY - ' . $_level->bonus->name,
+                                'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::CREDIT
+                    ]);
 
-                $transaction = Transactions::create([
-                            'user_id' => $indicator->child,
-                            'type' => TransactionsTypeEnum::BONUS,
-                            'order_item_id' => $item->id,
-                            'references_id' => $level->bonus->id,
-                            'value' => $level->amount,
-                            'status' => TransactionsStatusEnum::SUCCESS,
-                            'level' => $indicator->level,
-                            'description' => 'BINARY BONUS ' . $level->bonus->name,
-                            'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::CREDIT
-                ]);
+                    TransactionStatus::create([
+                        'transaction_id' => $transaction->id,
+                        'status' => $transaction->status
+                    ]);
 
-                TransactionStatus::create([
-                    'transaction_id' => $transaction->id,
-                    'status' => $transaction->status
-                ]);
-
-                self::incrementBonus($transaction, $level);
-
-                $_transaction['transaction'] = $transaction;
-            }
-
-            if ((int) $level->dots > 0 && (int) $level->is_active === 1) {
-
-                $genealogy = \App\Genealogy::find($indicator->parent);
-                $DotsBinary = DotsBinary::create([
-                            'user_id' => $indicator->child,
-                            'status' => $indicator->status,
-                            'order_item_id' => $item->id,
-                            'references_id' => $level->bonus->id,
-                            'dots' => $level->dots,
-                            'side' => $genealogy->side,
-                            'level' => $indicator->level,
-                            'description' => $level->bonus->name . " ORDER ITEM #" . $item->id
-                ]);
-
-                if ((int) $DotsBinary->status === \App\Http\Enum\UserStatusEnum::ACTIVE) {
-                    $genealogyResume = GenealogyResume::find($DotsBinary->user_id);
-                    $genealogyResume->increment('dots_binary_' . $DotsBinary->side, $DotsBinary->dots);
+                    self::incrementBonus($transaction, $_level);
+                    $_transaction['transactions'][] = $transaction;
                 }
 
-                $_transaction['scoreBinary'] = $DotsBinary;
+                if ((int) $_level->dots > 0 && (int) $_level->is_active === 1) {
+                    $DotsBinary = DotsBinary::create([
+                                'user_id' => $level['node']->user_id,
+                                'status' => $level['node']->status,
+                                'order_item_id' => $level['item']->order_id,
+                                'references_id' => $_level->bonus->id,
+                                'dots' => $_level->dots,
+                                'side' => $level['node']->side,
+                                'level' => $level['level'],
+                                'description' => $_level->bonus->name . " ORDER ITEM #" . $level['item']->order_id
+                    ]);
+
+                    if ((int) $DotsBinary->status === \App\Http\Enum\UserStatusEnum::ACTIVE) {
+                        $genealogyResume = GenealogyResume::find($DotsBinary->user_id);
+                        $genealogyResume->increment('dots_binary_' . $DotsBinary->side, $DotsBinary->dots);
+                    }
+                    $_transaction['scoreBinary'][] = $DotsBinary;
+                }
             }
         } catch (\Exception $ex) {
             throw new \Exception('Bonus Binary: ' . $ex->getMessage());
@@ -105,37 +100,56 @@ class BonusController extends Controller {
      * @param type $item
      * @throws type
      */
-    public static function unilevel($level, $indicator, $item) {
-
+    public static function unilevel($level) {
+        $_transaction['node'] = $level['node'];
         try {
-            if ($level->amount > 0) {
+            
+            $DotsUnilevelController = new DotsUnilevelController();
+            
+            foreach ($level['levels'] as $_level) {
+                if ($_level->amount > 0 && (int) $_level->is_active === 1) {
+                    $transaction = Transactions::create([
+                                'user_id' => $level['node']->user_id,
+                                'type' => TransactionsTypeEnum::BONUS,
+                                'order_item_id' => $level['item']->order_id,
+                                'references_id' => $_level->bonus->id,
+                                'value' => $_level->amount,
+                                'status' => TransactionsStatusEnum::SUCCESS,
+                                'level' => $level['level'],
+                                'description' => 'UNILEVEL - ' . $_level->bonus->name,
+                                'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::CREDIT
+                    ]);
 
-                $transaction = Transactions::create([
-                            'user_id' => $indicator->child,
-                            'type' => TransactionsTypeEnum::BONUS,
-                            'order_item_id' => $item->id,
-                            'references_id' => $level->bonus->id,
-                            'value' => $level->amount,
-                            'status' => $indicator->status,
-                            'level' => $indicator->level,
-                            'description' => 'UNILEVEL BONUS ' . $level->bonus->name,
-                            'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::CREDIT
-                ]);
+                    TransactionStatus::create([
+                        'transaction_id' => $transaction->id,
+                        'status' => $transaction->status
+                    ]);
 
-                TransactionStatus::create([
-                    'transaction_id' => $transaction->id,
-                    'status' => TransactionsStatusEnum::SUCCESS
-                ]);
+                    self::incrementBonus($transaction, $_level);
+                    $_transaction['transactions'][] = $transaction;
+                }
 
-                self::incrementBonus($transaction, $level);
+
+                if ((int) $_level->dots > 0 && (int) $_level->is_active === 1) {
+                    $DotsUnilevel = DotsUnilevel::create([
+                                'user_id' => $level['node']->user_id,
+                                'dots' => $_level->dots,
+                                'status' => $level['node']->status,
+                                'type' => TypeDotsUnilevel::BONUS,
+                                'level' => $level['level'],
+                                'references_id' => $_level->bonus->id,
+                                'description' => $_level->bonus->name . " ORDER ITEM #" . $level['item']->order_id
+                    ]);
+
+                    $DotsUnilevelController->sumNewDots($DotsUnilevel);
+
+                    $_transaction['scoreUnilevel'][] = $DotsUnilevel;
+                }
             }
         } catch (\Exception $ex) {
-            throw new \Exception('Bonus Unilevel Exception');
+            throw new \Exception('Bonus Unilevel Exception ' . $ex->getMessage());
         }
-
-        $DotsUnilevelController = new DotsUnilevelController();
-        $DotsUnilevelController->create($level, $indicator, $item);
-        $DotsUnilevelController->show($level, $indicator, $item);
+        return $_transaction;
     }
 
     /**
@@ -144,8 +158,7 @@ class BonusController extends Controller {
      * @param App\Level $level
      */
     public static function incrementBonus($transaction, $level) {
-        if (in_array($level->bonus->id, [\App\Http\Enum\FixedBonusEnum::DIRECT_SALE , \App\Http\Enum\FixedBonusEnum::DIRECT_INDICATION]) 
-                || ($transaction->status === \App\Http\Enum\UserStatusEnum::ACTIVE)) {
+        if (in_array($level->bonus->id, [\App\Http\Enum\FixedBonusEnum::DIRECT_SALE, \App\Http\Enum\FixedBonusEnum::DIRECT_INDICATION]) || ($transaction->status === \App\Http\Enum\UserStatusEnum::ACTIVE)) {
 
             $userResume = UserResume::find($transaction->user_id);
             $userResume->increment('amount', $transaction->value);

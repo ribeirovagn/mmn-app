@@ -111,8 +111,6 @@ class TransactionsController extends Controller {
         ]);
     }
 
-    
-
     /**
      * 
      * @param type $transaction
@@ -143,5 +141,6 @@ class TransactionsController extends Controller {
             return $exc->getMessage();
         }
     }
+
 
 }

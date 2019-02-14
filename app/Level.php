@@ -25,4 +25,8 @@ class Level extends Model
     public function bonus(){
         return $this->belongsTo("App\Bonus");
     }
+    
+    public function product(){
+        return $this->belongsTo('App\Product', 'product_id');
+    }
 }

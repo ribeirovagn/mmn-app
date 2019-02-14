@@ -82,7 +82,6 @@ class LevelController extends Controller {
             $level = Level::find($id);
             $level->update($request->all());
             return $level;
-            
         } catch (\Exception $exc) {
             return response([
                 'error' => $exc->getMessage()
@@ -121,6 +120,22 @@ class LevelController extends Controller {
         }
 
         return false;
+    }
+
+    public static function getByProductAndLevel($product, $_level, $type) {
+        $levels = Level::with(['product', 'bonus'])
+                        ->where('product_id', $product)
+                        ->where('type', '=', $type)->get();
+
+        $aux = [];
+        
+        foreach ($levels as $level) {
+            if ($_level >= (int) $level->start && $_level <= (int) $level->end) {
+                $aux[] = $level;
+            }
+        }
+        
+        return $aux;
     }
 
 }

@@ -15,9 +15,7 @@ use Carbon\Carbon;
 
 class OrderController extends Controller {
 
-    
     protected $_SysBusinessController = null;
-
 
     /**
      * Display a listing of the resource.
@@ -170,7 +168,7 @@ class OrderController extends Controller {
             $order = $this->show($id);
 
             if ($order->status === OrderStatusEnum::PAID) {
-                throw new \Exception("Order already paid!");
+//                throw new \Exception("Order already paid!");
             }
 
             $userResume = \App\UserResume::find(Auth::user()->id);
@@ -179,7 +177,7 @@ class OrderController extends Controller {
 //                throw new \Exception("Insufficient funds!");
             }
 
-            
+
             $this->_SysBusinessController = SysBusinessController::show();
             $levelcontroller = new LevelController();
             $productController = new ProductController();
@@ -197,8 +195,13 @@ class OrderController extends Controller {
                             break;
 
                         case "Multilevel":
+
+                            $updated = $this->payUnilevel($order, $item);
+                            DB::rollBack();
+                            return $updated;
+
+
                             $updated = $this->payBinary($order, $item);
-                            $this->payUnilevel($order, $item);
                             break;
 
                         case "Voucher":
@@ -209,7 +212,7 @@ class OrderController extends Controller {
             }
 
             $updated = $this->updateStatus($order, OrderStatusEnum::PAID);
-            
+
             DB::commit();
             return response([
                 'message' => 'OK',
@@ -254,7 +257,7 @@ class OrderController extends Controller {
      */
     protected function payActivation($order, $item) {
         try {
-            
+
             $GenealogyController = new GenealogyController();
             $Genealogy = $GenealogyController->updateStatus($order->user_id, UserStatusEnum::ACTIVE);
             $genealogyResumes = \App\GenealogyResume::find($order->user_id);
@@ -282,18 +285,36 @@ class OrderController extends Controller {
     protected function payUnilevel($order, $item) {
         try {
 
-            if ((int)$this->_SysBusinessController->unilevel === 1) {
-                $levelController = new LevelController();
-                $levels = $levelController->show($item->product_id, \App\Http\Enum\LevelTypeEnum::UNILEVEL);
+            if ((int) $this->_SysBusinessController->unilevel === 1) {
 
-                $indicators = GenealogyController::indicatorsAsc($order->user_id);
-                if (count($indicators) > 0) {
-                    foreach ($indicators as $indicator) {
-                        $level = LevelController::betweenNormalize($levels, (int) $indicator->level);
-                        if ($level) {
-                            return BonusController::unilevel($level, $indicator, $item);
-                        }
+                $GenealogyController = new GenealogyController();
+
+                $genealogy = $GenealogyController->getindicador($order->user_id);
+
+                $levels = [];
+
+                foreach ($genealogy as $key => $value) {
+
+                    $bonus = LevelController::getByProductAndLevel($item->product_id, $key, \App\Http\Enum\LevelTypeEnum::UNILEVEL);
+
+                    if (count($bonus) > 0) {
+                        $levels[] = [
+                            'level' => $key,
+                            'node' => $genealogy[$key],
+                            'levels' => $bonus,
+                            'item' => $item,
+                        ];
                     }
+                }
+
+                if (count($levels) > 0) {
+                    $levels = collect($levels);
+                    $bonus = [];
+                    foreach ($levels as $level) {
+                        $bonus[] = BonusController::unilevel($level);
+                    }
+
+                    return $bonus;
                 }
             }
         } catch (\Exception $exc) {
@@ -310,24 +331,41 @@ class OrderController extends Controller {
      */
     protected function payBinary($order, $item) {
         try {
+//            return $this->_SysBusinessController;
+            if ($this->_SysBusinessController->binary === 1) {
 
-            if ((int)$this->_SysBusinessController->binary === 1) {
-                $levelController = new LevelController();
-                $levels = $levelController->show($item->product_id, \App\Http\Enum\LevelTypeEnum::BINARY);
+                $GenealogyController = new GenealogyController();
 
-                $nodes = GenealogyController::nodesAsc($order->user_id);
-                if (count($nodes) > 0) {
-                    foreach ($nodes as $node) {
-                        $level = LevelController::betweenNormalize($levels, (int) $node->level);
-                        if ($level) {
-                            BonusController::binary($level, $node, $item);
-                        }
+                $genealogy = $GenealogyController->getFather($order->user_id);
+
+                $levels = [];
+
+                foreach ($genealogy as $key => $value) {
+
+                    $bonus = LevelController::getByProductAndLevel($item->product_id, $key, \App\Http\Enum\LevelTypeEnum::BINARY);
+
+                    if (count($bonus) > 0) {
+                        $levels[] = [
+                            'level' => $key,
+                            'node' => $genealogy[$key],
+                            'levels' => $bonus,
+                            'item' => $item,
+                        ];
                     }
                 }
+
+                if (count($levels) > 0) {
+                    $levels = collect($levels);
+                    $bonus = [];
+                    foreach ($levels as $level) {
+                        $bonus[] = BonusController::binary($level);
+                    }
+
+                    return $bonus;
+                }
             }
-            
         } catch (\Exception $exc) {
-            throw new \Exception('Binary ' . $exc->getMessage());
+            throw new \Exception('= Binary = ' . $exc->getMessage());
         }
     }
 
