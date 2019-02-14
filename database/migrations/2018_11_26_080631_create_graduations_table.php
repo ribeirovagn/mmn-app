@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
+
 class CreateGraduationsTable extends Migration
 {
     /**
@@ -21,6 +22,7 @@ class CreateGraduationsTable extends Migration
             $table->decimal('limit', 10, 2);
             $table->integer('dots_start');
             $table->integer('dots_end');
+            $table->decimal('value', 12, 2)->default(0);
             $table->timestamps();
         });
     }

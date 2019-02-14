@@ -17,10 +17,12 @@ abstract class FixedBonusEnum {
     const DIRECT_SALE = 1;
     const DIRECT_INDICATION = 2;
     const BINARY_CLOSURE = 3;
+    const GRADUATION = 4;
     
     const BONUS = [
         self::DIRECT_SALE => 'DIRECT SALE',
         self::DIRECT_INDICATION => 'DIRECT INDICATION',
         self::BINARY_CLOSURE => 'BINARY CLOSURE',
+        self::GRADUATION => 'GRADUATION',
     ];
 }

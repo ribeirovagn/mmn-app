@@ -12,7 +12,8 @@ class Graduation extends Model
         'ordinal',
         'limit',
         'dots_start',
-        'dots_end'
+        'dots_end',
+        'value'
     ];
     
     public function levels(){

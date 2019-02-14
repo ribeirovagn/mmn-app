@@ -6,6 +6,12 @@ use App\Graduation;
 use App\GraduationsHist;
 use App\GenealogyResume;
 use Illuminate\Http\Request;
+use App\Transactions;
+use App\TransactionStatus;
+use App\Http\Enum\FixedBonusEnum;
+use App\Http\Enum\TransactionsTypeEnum;
+use App\Http\Enum\SysTransactionOperationTypeEnum;
+use App\UserResume;
 
 class GraduationController extends Controller {
 
@@ -33,6 +39,29 @@ class GraduationController extends Controller {
 
                 if ($graduation->dots_start >= $genealogyResumes->dots_unilevel) {
                     break;
+                }
+
+                if ($graduation->value > 0) {
+
+                    $transaction = Transactions::create([
+                                'user_id' => $user_id,
+                                'type' => TransactionsTypeEnum::BONUS,
+                                'references_id' => FixedBonusEnum::GRADUATION,
+                                'value' => $graduation->value,
+                                'status' => TransactionsStatusEnum::SUCCESS,
+                                'level' => 0,
+                                'description' => FixedBonusEnum::BONUS[FixedBonusEnum::GRADUATION] . ' - ' . $graduation->name,
+                                'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::CREDIT
+                    ]);
+
+                    TransactionStatus::create([
+                        'transaction_id' => $transaction->id,
+                        'status' => $transaction->status
+                    ]);
+
+                    $userResume = UserResume::find($transaction->user_id);
+                    $userResume->increment('amount', $transaction->value);
+                    $userResume->increment('amount_bonus', $transaction->value);
                 }
 
                 $genealogyResumes->update([

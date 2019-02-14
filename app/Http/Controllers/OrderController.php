@@ -195,12 +195,7 @@ class OrderController extends Controller {
                             break;
 
                         case "Multilevel":
-
                             $updated = $this->payUnilevel($order, $item);
-                            DB::rollBack();
-                            return $updated;
-
-
                             $updated = $this->payBinary($order, $item);
                             break;
 
