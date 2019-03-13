@@ -66,10 +66,10 @@ class BonusController extends Controller {
                     $_transaction['transactions'][] = $transaction;
                 }
 
-                if ((int) $_level->dots > 0 && (int) $_level->is_active === 1) {
+                if ((int) $_level->dots > 0 && (int) $_level->is_active === 1 && isset($level['node']['nodeAsc']->user_id)) {
                     $DotsBinary = DotsBinary::create([
-                                'user_id' => $level['node']->user_id,
-                                'status' => $level['node']->status,
+                                'user_id' => $level['node']['nodeAsc']->user_id,
+                                'status' => $level['node']['nodeAsc']->status,
                                 'order_item_id' => $level['item']->order_id,
                                 'references_id' => $_level->bonus->id,
                                 'dots' => $_level->dots,

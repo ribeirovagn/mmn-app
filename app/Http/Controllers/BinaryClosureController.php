@@ -50,10 +50,10 @@ class BinaryClosureController extends Controller {
                 $DotsUnilevelController = new DotsUnilevelController();
                 foreach ($dotsBinary as $dot) {
                     if ($dot->dots_binary_1 !== $dot->dots_binary_0) {
-                        
+
                         $lessLeg = ($dot->dots_binary_1 < $dot->dots_binary_0) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT;
                         $dotsLess = 'dots_binary_' . $lessLeg;
-                        
+
                         $closure = Closure::create([
                                     'binary_closure_id' => $binaryClosure->id,
                                     'user_id' => $dot->user_id,
@@ -72,25 +72,29 @@ class BinaryClosureController extends Controller {
                         $genealogyResume->decrement('dots_binary_1', $closure->less_leg);
 
                         $dotsUnilevel = \App\DotsUnilevel::create([
-                            'user_id' => $genealogyResume->user_id,
-                            'dots' => $closure->{$dotsLess},
-                            'status' => $genealogyResume->genealogy->status,
-                            'type' => TypeDotsUnilevel::BINARY_CLOSURE,
-                            'level' => 0,
-                            'references_id' => $binaryClosure->id,
-                            'description' => $bonusBinary->name
+                                    'user_id' => $genealogyResume->user_id,
+                                    'dots' => $closure->{$dotsLess},
+                                    'status' => $genealogyResume->genealogy->status,
+                                    'type' => TypeDotsUnilevel::BINARY_CLOSURE,
+                                    'level' => 0,
+                                    'references_id' => $binaryClosure->id,
+                                    'description' => $bonusBinary->name
                         ]);
 
                         $DotsUnilevelController->sumNewDots($dotsUnilevel);
-                        DB::commit();
                     }
                 }
             }
-            return;
+            DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
             return $ex->getMessage();
         }
+    }
+
+    public function quotes($binaryClosure) {
+        $closure = $this->show($id);
+        
     }
 
     /**
@@ -99,8 +103,8 @@ class BinaryClosureController extends Controller {
      * @param  \App\BinaryClosure  $binaryClosure
      * @return \Illuminate\Http\Response
      */
-    public function show(BinaryClosure $binaryClosure) {
-        //
+    public function show($id) {
+        return BinaryClosure::with(['closure'])->find($id);
     }
 
     /**

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Transactions;
 use App\TransactionStatus;
 use App\Http\Enum\FixedBonusEnum;
+use App\Http\Enum\TransactionsStatusEnum;
 use App\Http\Enum\TransactionsTypeEnum;
 use App\Http\Enum\SysTransactionOperationTypeEnum;
 use App\UserResume;

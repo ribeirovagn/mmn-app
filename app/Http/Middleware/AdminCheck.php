@@ -18,7 +18,9 @@ class AdminCheck
     {
         if(Auth::check()){
             if(Auth::user()->is_admin === 0){
-                Auth::logout();
+                
+                $userController = new \App\Http\Controllers\UserController();
+                $userController->logoutApi();
                 throw new \Exception('Operation is not permited!');
             }
         }

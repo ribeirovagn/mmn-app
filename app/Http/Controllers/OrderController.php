@@ -197,6 +197,9 @@ class OrderController extends Controller {
                         case "Multilevel":
                             $updated = $this->payUnilevel($order, $item);
                             $updated = $this->payBinary($order, $item);
+//                            DB::rollBack();
+//                            return $updated;
+//                            
                             break;
 
                         case "Voucher":
@@ -328,17 +331,12 @@ class OrderController extends Controller {
         try {
 //            return $this->_SysBusinessController;
             if ($this->_SysBusinessController->binary === 1) {
-
                 $GenealogyController = new GenealogyController();
-
                 $genealogy = $GenealogyController->getFather($order->user_id);
-
                 $levels = [];
-
+                                
                 foreach ($genealogy as $key => $value) {
-
                     $bonus = LevelController::getByProductAndLevel($item->product_id, $key, \App\Http\Enum\LevelTypeEnum::BINARY);
-
                     if (count($bonus) > 0) {
                         $levels[] = [
                             'level' => $key,
@@ -348,9 +346,8 @@ class OrderController extends Controller {
                         ];
                     }
                 }
-
+                
                 if (count($levels) > 0) {
-                    $levels = collect($levels);
                     $bonus = [];
                     foreach ($levels as $level) {
                         $bonus[] = BonusController::binary($level);

@@ -37,10 +37,8 @@ class BinaryClosure extends Command
      */
     public function handle()
     {
-        $closureController = new \App\Http\Controllers\BinaryClosureController();
-        
+        $closureController = new \App\Http\Controllers\BinaryClosureController();        
         $closure = $closureController->store();
-        
-        var_dump($closure);
+
     }
 }

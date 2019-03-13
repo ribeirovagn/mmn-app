@@ -95,7 +95,7 @@ class GenealogyController extends Controller {
 
     public function family($id = null) {
         $id = (is_null($id)) ? Auth::user()->id : $id;
-        return response(Genealogy::with(['children', 'user', 'status', 'resume'])->find($id));
+        return response(Genealogy::with(['children', 'user', 'status', 'resume', 'indicator'])->find($id));
     }
 
     /**
@@ -107,7 +107,7 @@ class GenealogyController extends Controller {
     public function getFather($id = null) {
 //        $id = is_null($id) ? Auth::user()->id : $id;
         $this->normalizedGenealogy = [];
-        $Genealogy = Genealogy::with(['binaryfather', 'father', 'user'])->find($id);
+        $Genealogy = Genealogy::with(['binaryfather', 'nodeAsc', 'user'])->find($id);
         $this->normalizeGenealogy($Genealogy);
         return $this->normalizedGenealogy;
     }

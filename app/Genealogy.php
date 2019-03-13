@@ -62,6 +62,10 @@ class Genealogy extends Model {
         return $this->hasOne('App\Genealogy', 'user_id', 'father')->with(['user']);
     }
     
+    public function nodeAsc(){
+        return $this->hasOne('App\Genealogy', 'user_id', 'father')->with(['user']);
+    }
+    
     public function indicator(){
         return $this->hasOne('App\Genealogy', 'user_id', 'indicator')->with(['user']);
     }
@@ -169,7 +173,7 @@ class Genealogy extends Model {
      * @return type
      */
     public function binaryfather(){
-        return $this->hasOne('App\Genealogy', 'user_id', 'father')->with(['binaryfather', 'father', 'user']);
+        return $this->hasOne('App\Genealogy', 'user_id', 'father', 'nodeAsc')->with(['binaryfather', 'user', 'nodeAsc', 'father']);
     }
 
     
