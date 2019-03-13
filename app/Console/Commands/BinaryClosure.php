@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Http\Controllers\BinaryClosureController;
 
-class BinaryClosure extends Command
-{
+
+class BinaryClosure extends Command {
+
     /**
      * The name and signature of the console command.
      *
@@ -25,8 +27,7 @@ class BinaryClosure extends Command
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -35,10 +36,9 @@ class BinaryClosure extends Command
      *
      * @return mixed
      */
-    public function handle()
-    {
-        $closureController = new \App\Http\Controllers\BinaryClosureController();        
-        $closure = $closureController->store();
-
+    public function handle() {
+        $closureController = new BinaryClosureController();
+        return $closureController->store();
     }
+
 }

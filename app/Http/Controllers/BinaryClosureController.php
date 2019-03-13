@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use App\Http\Enum\BinarySideEnum;
 use App\Http\Enum\TypeDotsUnilevel;
 use Illuminate\Support\Facades\DB;
+use App\Http\Enum\SysBinaryTypeEnum;
+use App\Transactions;
+use App\UserResume;
 
 class BinaryClosureController extends Controller {
 
@@ -37,52 +40,34 @@ class BinaryClosureController extends Controller {
      */
     public function store() {
         DB::beginTransaction();
+        
         try {
             $binaryClosure = BinaryClosure::create([
                         'note' => 'Binary Closure'
             ]);
+            
+            return $binaryClosure;
 
             $dotsBinary = DotsBinaryController::toClosure();
             $bonusBinary = \App\Bonus::find(\App\Http\Enum\FixedBonusEnum::BINARY_CLOSURE);
 
             if (count($dotsBinary) > 0) {
-                $graduationController = new GraduationController();
-                $DotsUnilevelController = new DotsUnilevelController();
-                foreach ($dotsBinary as $dot) {
-                    if ($dot->dots_binary_1 !== $dot->dots_binary_0) {
 
-                        $lessLeg = ($dot->dots_binary_1 < $dot->dots_binary_0) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT;
-                        $dotsLess = 'dots_binary_' . $lessLeg;
+                $sysConfig = \App\SysBusiness::first();
 
-                        $closure = Closure::create([
-                                    'binary_closure_id' => $binaryClosure->id,
-                                    'user_id' => $dot->user_id,
-                                    'dots_binary_0' => $dot->dots_binary_0,
-                                    'dots_binary_1' => $dot->dots_binary_1,
-                                    'less_leg' => $dot->{$dotsLess},
-                                    'dots_unilevel' => $dot->dots_unilevel,
-                                    'graduation_id' => $dot->graduations_id,
-                                    'status' => $dot->genealogy->status,
-                                    'binary_percentage' => $dot->binary_percentage
-                        ]);
+                return $sysConfig;
+                
+                switch ($sysConfig->sys_binary_type_id) {
+                    case SysBinaryTypeEnum::MAIN:
+                        $this->default($dotsBinary, $binaryClosure);
+                        break;
 
+                    case SysBinaryTypeEnum::QUOTES:
+                        $this->quotes($dotsBinary, $binaryClosure);
+                        break;
 
-                        $genealogyResume = \App\GenealogyResume::find($closure->user_id);
-                        $genealogyResume->decrement('dots_binary_0', $closure->less_leg);
-                        $genealogyResume->decrement('dots_binary_1', $closure->less_leg);
-
-                        $dotsUnilevel = \App\DotsUnilevel::create([
-                                    'user_id' => $genealogyResume->user_id,
-                                    'dots' => $closure->{$dotsLess},
-                                    'status' => $genealogyResume->genealogy->status,
-                                    'type' => TypeDotsUnilevel::BINARY_CLOSURE,
-                                    'level' => 0,
-                                    'references_id' => $binaryClosure->id,
-                                    'description' => $bonusBinary->name
-                        ]);
-
-                        $DotsUnilevelController->sumNewDots($dotsUnilevel);
-                    }
+                    default:
+                        break;
                 }
             }
             DB::commit();
@@ -92,9 +77,98 @@ class BinaryClosureController extends Controller {
         }
     }
 
-    public function quotes($binaryClosure) {
+    private function default($dotsBinary, $binaryClosure) {
+        try {
+            $graduationController = new GraduationController();
+            $DotsUnilevelController = new DotsUnilevelController();
+
+            foreach ($dotsBinary as $dot) {
+                if ($dot->dots_binary_1 !== $dot->dots_binary_0) {
+
+                    $closure = $this->commons($dots, $binaryClosures);
+                    $objTransaction = new \stdClass();
+                    $value = $closure->less_leg / (100 / $dot->binary_percentage);
+
+                    $objTransaction->user_id = $dot->user_id;
+                    $objTransaction->type = 0;
+                    $objTransaction->references_id = 0;
+                    $objTransaction->value = $value;
+
+                    $this->transaction($objTransaction);
+                }
+            }
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            throw new \Exception("DEFAULT BICHADO");
+        }
+    }
+
+    public function quotes($dotsBinary, $binaryClosures) {
         $closure = $this->show($id);
-        
+    }
+
+    public function commons($dots, $binaryClosures) {
+        try {
+            $lessLeg = ($dot->dots_binary_1 < $dot->dots_binary_0) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT;
+            $dotsLess = 'dots_binary_' . $lessLeg;
+
+            $closure = Closure::create([
+                        'binary_closure_id' => $binaryClosure->id,
+                        'user_id' => $dot->user_id,
+                        'dots_binary_0' => $dot->dots_binary_0,
+                        'dots_binary_1' => $dot->dots_binary_1,
+                        'less_leg' => $dot->{$dotsLess},
+                        'dots_unilevel' => $dot->dots_unilevel,
+                        'graduation_id' => $dot->graduations_id,
+                        'status' => $dot->genealogy->status,
+                        'binary_percentage' => $dot->binary_percentage
+            ]);
+
+
+            $genealogyResume = \App\GenealogyResume::find($closure->user_id);
+            $genealogyResume->decrement('dots_binary_0', $closure->less_leg);
+            $genealogyResume->decrement('dots_binary_1', $closure->less_leg);
+
+            $dotsUnilevel = \App\DotsUnilevel::create([
+                        'user_id' => $genealogyResume->user_id,
+                        'dots' => $closure->{$dotsLess},
+                        'status' => $genealogyResume->genealogy->status,
+                        'type' => TypeDotsUnilevel::BINARY_CLOSURE,
+                        'level' => 0,
+                        'references_id' => $binaryClosure->id,
+                        'description' => $bonusBinary->name
+            ]);
+
+            $DotsUnilevelController->sumNewDots($dotsUnilevel);
+            return $closure;
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            throw new \Exception("COMMONS BICHADO");
+        }
+    }
+
+    private function transaction($objTransaction) {
+
+        $transaction = Transactions::create([
+                    'user_id' => $objTransaction->user_id,
+                    'type' => $objTransaction->type,
+                    'references_id' => $objTransaction->references_id,
+                    'value' => $objTransaction->value,
+                    'status' => TransactionsStatusEnum::SUCCESS,
+                    'level' => 0,
+                    'description' => 'BINARY CLOSURE',
+                    'operation' => \App\Http\Enum\SysTransactionOperationTypeEnum::CREDIT
+        ]);
+
+        TransactionStatus::create([
+            'transaction_id' => $transaction->id,
+            'status' => $transaction->status
+        ]);
+
+
+        $userResume = UserResume::find($transaction->user_id);
+        $userResume->increment('amount', $transaction->value);
+        $userResume->increment('amount_bonus', $transaction->value);
     }
 
     /**
