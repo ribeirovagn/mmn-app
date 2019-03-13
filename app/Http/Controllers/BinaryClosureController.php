@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Enum\SysBinaryTypeEnum;
 use App\Transactions;
 use App\UserResume;
+use App\Http\Enum\TransactionsStatusEnum;
+use App\TransactionStatus;
 
 class BinaryClosureController extends Controller {
 
@@ -40,23 +42,20 @@ class BinaryClosureController extends Controller {
      */
     public function store() {
         DB::beginTransaction();
-        
+
         try {
             $binaryClosure = BinaryClosure::create([
                         'note' => 'Binary Closure'
             ]);
-            
-            return $binaryClosure;
+
 
             $dotsBinary = DotsBinaryController::toClosure();
-            $bonusBinary = \App\Bonus::find(\App\Http\Enum\FixedBonusEnum::BINARY_CLOSURE);
+
 
             if (count($dotsBinary) > 0) {
 
                 $sysConfig = \App\SysBusiness::first();
 
-                return $sysConfig;
-                
                 switch ($sysConfig->sys_binary_type_id) {
                     case SysBinaryTypeEnum::MAIN:
                         $this->default($dotsBinary, $binaryClosure);
@@ -73,19 +72,18 @@ class BinaryClosureController extends Controller {
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
+            print_r($ex->getMessage());
             return $ex->getMessage();
         }
     }
 
     private function default($dotsBinary, $binaryClosure) {
         try {
-            $graduationController = new GraduationController();
-            $DotsUnilevelController = new DotsUnilevelController();
 
             foreach ($dotsBinary as $dot) {
                 if ($dot->dots_binary_1 !== $dot->dots_binary_0) {
 
-                    $closure = $this->commons($dots, $binaryClosures);
+                    $closure = $this->commons($dot, $binaryClosure);
                     $objTransaction = new \stdClass();
                     $value = $closure->less_leg / (100 / $dot->binary_percentage);
 
@@ -98,8 +96,7 @@ class BinaryClosureController extends Controller {
                 }
             }
         } catch (\Exception $ex) {
-            DB::rollBack();
-            throw new \Exception("DEFAULT BICHADO");
+            throw new \Exception($ex->getMessage());
         }
     }
 
@@ -107,8 +104,11 @@ class BinaryClosureController extends Controller {
         $closure = $this->show($id);
     }
 
-    public function commons($dots, $binaryClosures) {
+    public function commons($dot, $binaryClosure) {
         try {
+            $graduationController = new GraduationController();
+            $DotsUnilevelController = new DotsUnilevelController();
+            $bonusBinary = \App\Bonus::find(\App\Http\Enum\FixedBonusEnum::BINARY_CLOSURE);
             $lessLeg = ($dot->dots_binary_1 < $dot->dots_binary_0) ? BinarySideEnum::RIGHT : BinarySideEnum::LEFT;
             $dotsLess = 'dots_binary_' . $lessLeg;
 
@@ -142,8 +142,7 @@ class BinaryClosureController extends Controller {
             $DotsUnilevelController->sumNewDots($dotsUnilevel);
             return $closure;
         } catch (\Exception $ex) {
-            DB::rollBack();
-            throw new \Exception("COMMONS BICHADO");
+            throw new \Exception($ex->getMessage());
         }
     }
 
