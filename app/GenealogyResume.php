@@ -10,12 +10,13 @@ class GenealogyResume extends Model
         'user_id',
         'indicated',
         'product_plan_id',
+        'graduations_id',
         'binary_percentage',
         'dots_binary_0',
         'dots_binary_1',
         'dots_unilevel',
         'quantity_0',
-        'quantity_1'
+        'quantity_1',
     ];
     
     public $timestamps = false;

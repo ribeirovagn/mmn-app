@@ -13,6 +13,7 @@ use App\Transactions;
 use App\UserResume;
 use App\Http\Enum\TransactionsStatusEnum;
 use App\TransactionStatus;
+use Illuminate\Support\Facades\Auth;
 
 class BinaryClosureController extends Controller {
 
@@ -35,10 +36,8 @@ class BinaryClosureController extends Controller {
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * 
+     * @return type
      */
     public function store() {
         DB::beginTransaction();
@@ -72,11 +71,16 @@ class BinaryClosureController extends Controller {
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
-            print_r($ex->getMessage());
             return $ex->getMessage();
         }
     }
 
+    /**
+     * 
+     * @param type $dotsBinary
+     * @param type $binaryClosure
+     * @throws \Exception
+     */
     private function default($dotsBinary, $binaryClosure) {
         try {
 
@@ -100,10 +104,23 @@ class BinaryClosureController extends Controller {
         }
     }
 
+    /**
+     * 
+     * @param type $dotsBinary
+     * @param type $binaryClosures
+     */
     public function quotes($dotsBinary, $binaryClosures) {
         $closure = $this->show($id);
     }
 
+    
+    /**
+     * 
+     * @param type $dot
+     * @param type $binaryClosure
+     * @return type
+     * @throws \Exception
+     */
     public function commons($dot, $binaryClosure) {
         try {
             $graduationController = new GraduationController();
@@ -146,6 +163,11 @@ class BinaryClosureController extends Controller {
         }
     }
 
+    
+    /**
+     * 
+     * @param type $objTransaction
+     */
     private function transaction($objTransaction) {
 
         $transaction = Transactions::create([
@@ -209,6 +231,12 @@ class BinaryClosureController extends Controller {
      */
     public function destroy(BinaryClosure $binaryClosure) {
         //
+    }
+    
+    
+    public function listByUser($user_id = null){
+        $user_id = (is_null($user_id)) ? Auth::user()->id : $user_id;
+        return Closure::with(['binary_closure', 'graduation', 'statuses'])->where('user_id', $user_id)->get();
     }
 
 }

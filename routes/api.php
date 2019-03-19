@@ -43,6 +43,8 @@ Route::group([
     Route::get('children/{leafs}', 'GenealogyController@leafs');
     Route::get('children', 'GenealogyController@leafs');
 
+    
+    Route::get('/binary-closure', 'BinaryClosureController@listByUser');
 
     Route::group([
         'prefix' => 'resume'
